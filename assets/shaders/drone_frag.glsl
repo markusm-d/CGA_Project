@@ -27,6 +27,9 @@ void main(){
     vec3 emitCol = texture(emit, vertexData.texture).rgb;
     vec3 specularCol = texture(specular, vertexData.texture).rgb;
 
-    color = vec4(emitCol,1.0);
+    //Versuch drone sichtbar zu machen. Fehlgeschlagen
+    vec3 colorChange=emitCol*diffCol*specularCol;
+
+    color = vec4(colorChange,1.0);
 
 }

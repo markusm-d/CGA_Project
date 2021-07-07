@@ -27,29 +27,31 @@ import kotlin.math.sin
  */
 class Scene(private val window: GameWindow) {
     private val staticShader: ShaderProgram
-    //ältere Shaderversion versucht, um die Drohne zu laden. Leider kein Erfolg
+    //ältere Shaderversion versucht, um die Drohne zu laden. Leider kein Erfolg. Vielleicht gar nicht nötig?
     private val droneShader:ShaderProgram
+    private val cloudShader:ShaderProgram
 
     //ObjectLoader
     //TODO: für die Wolken ist definitv ein eigener Shader notwendig, da sie nur über Positions- und Normal-Vertecies verfügen!!
      //Object laden
     //Beide Versionen für das Laden von Objekten versucht, bei beiden kein Problem beim Compile, aber keine Drohne zu sehen...
     private val resGround : OBJLoader.OBJResult = OBJLoader.loadOBJ("assets/models/ground.obj")
-    //private val resDrone:OBJLoader.OBJResult=OBJLoader.loadOBJ("Assets/models/drone.obj")
+    private val resDrone:OBJLoader.OBJResult=OBJLoader.loadOBJ("assets/models/drone.obj")
+
      //Mesh für die Daten von Vertex und Index laden
     private val objMeshGround : OBJLoader.OBJMesh = resGround.objects[0].meshes[0]
-    //private val objMeshDrone:OBJLoader.OBJMesh=resDrone.objects[0].meshes[0]
+    private val objMeshDrone:OBJLoader.OBJMesh=resDrone.objects[0].meshes[0]
+
     //Meshes
     private var groundMesh : Mesh
-    //private var droneMesh:Mesh
+    private var droneMesh:Mesh
+
     private var cycleRend = ModelLoader.loadModel("assets/Light Cycle/Light Cycle/HQ_Movie cycle.obj", Math.toRadians(-90.0f),Math.toRadians(90.0f), 0.0f) ?: throw IllegalArgumentException("Could not load the model")
-    //Drohne laden
-    private var droneRend=ModelLoader.loadModel("assets/models/drone.obj",Math.toRadians(-90.0f),Math.toRadians(90.0f), 0.0f) ?: throw IllegalArgumentException("Could not load the model")
 
 
     //Renderables
     private var groundRend = Renderable()
-    //private val droneRend=Renderable()
+    private val droneRend=Renderable()
 
     //Camera
     private var tronCamera  = TronCamera()
@@ -63,6 +65,8 @@ class Scene(private val window: GameWindow) {
         //staticShader = ShaderProgram("assets/shaders/simple_vert.glsl", "assets/shaders/simple_frag.glsl")
         staticShader = ShaderProgram("assets/shaders/tron_vert.glsl", "assets/shaders/tron_frag.glsl")
         droneShader= ShaderProgram("assets/shaders/drone_vert.glsl","assets/shaders/drone_frag.glsl")
+        cloudShader= ShaderProgram("assets/shaders/cloud_vert.glsl","assets/shaders/cloud_frag.glsl")
+
         //initial opengl state
         //glClearColor(0.6f, 1.0f, 1.0f, 1.0f); GLError.checkThrow()
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f); GLError.checkThrow()
@@ -95,7 +99,8 @@ class Scene(private val window: GameWindow) {
 
         //erzeuegn
         val groundMaterial = Material(diffTex, emitTex, specTex, 60.0f, Vector2f(64.0f,64.0f))
-        //val droneMaterial=Material(droneMeTex,droneEmTex,droneRoTex,60.0f, Vector2f(64.0f,64.0f))
+         //TODO: Material richtig auf die Drohne laden :D Shader mit mehr Texturvariablen? neues Material?
+        val droneMaterial=Material(droneMeTex,droneEmTex,droneRoTex,60.0f, Vector2f(64.0f,64.0f))
 
         //Texturparameter für Objektende
         emitTex.setTexParams(GL_REPEAT, GL_REPEAT, GL11.GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR)     //Linear = zwischen farbwerten interpolieren
@@ -104,21 +109,27 @@ class Scene(private val window: GameWindow) {
 
         //Mesh erzeugen
         groundMesh = Mesh(objMeshGround.vertexData, objMeshGround.indexData, vertexAttributes, groundMaterial)
-        //droneMesh= Mesh(objMeshDrone.vertexData,objMeshDrone.indexData,vertexAttributes,droneMaterial)
+        droneMesh= Mesh(objMeshDrone.vertexData,objMeshDrone.indexData,vertexAttributes,droneMaterial)
         //Meshes zu Randerable hinzufügen
         groundRend.meshList.add(groundMesh)
-        //droneRend.meshList.add(droneMesh)
+        droneRend.meshList.add(droneMesh)
 
         //Bike skalieren
         cycleRend.scaleLocal(Vector3f(0.8f))
 
-        droneRend.scaleLocal(Vector3f(0.8f))
+        //TODO: Drohne steht seitlich? Warum?
+        droneRend.scaleLocal(Vector3f(0.0002f)) //drone ist echt groß :D
+        droneRend.translateLocal(Vector3f(0.0f,10000.0f,-1.0f))
+        //ROtate funktioniert nicht wirklich? Drohne gedreht, aber auch Kamera und Bewegung verändert...
+        //droneRend.rotateAroundPoint(0.0f,Math.toRadians(90.0f),0.0f,droneRend.getWorldPosition())
 
 
-        tronCamera.parent = cycleRend
+
+        tronCamera.parent = droneRend
         //Kameratransformationen
         tronCamera.rotateLocal(Math.toRadians(-35.0f), 0.0f, 0.0f)
-        tronCamera.translateLocal(Vector3f(0.0f, 0.5f, 4.0f))
+        //Bei drone Werte wegen der Skalierung so hoch
+        tronCamera.translateLocal(Vector3f(0.0f, 1000.0f, 4000.0f))
 
         //Lichtertransformationen
         pointLight = PointLight(tronCamera.getWorldPosition(), Vector3f(1f,1f,0f))
@@ -134,27 +145,28 @@ class Scene(private val window: GameWindow) {
 
     fun render(dt: Float, t: Float) {
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
-        droneShader.use()
-        droneRend.render(staticShader)
-
+        //TODO: Problem wegen unterschiedlicher Shader lösen. Wenn drone-Shader genutzt, Drohne nicht zu sehen
+        /*droneShader.use()
+        droneRend.render(droneShader)*/
         //shader Benutzung definieren
         staticShader.use()
         //Kamera binden
         tronCamera.bind(staticShader)
         //mesh rendern
-        //Eventuell anderer Shader nötig?
+        //Eventuell anderer Shader nötig. Wird dargestellt, aber nicht korrekt :D
+        droneRend.render(staticShader)
         staticShader.setUniform("colorChange", Vector3f(abs(sin(t)),abs(sin(t/2)),abs(sin(t/3))))
-        //Drohne nicht zu sehen. Warum?
         cycleRend.render(staticShader)
         pointLight.bind(staticShader, "byklePoint")
         frontSpotLight.bind(staticShader, "bykleSpot", tronCamera.getCalculateViewMatrix())
         staticShader.setUniform("colorChange", Vector3f(0.0f,1.0f,0.0f))
         groundRend.render(staticShader)
+
     }
 
 
 
-   /* fun update(dt: Float, t: Float) {
+    /*fun update(dt: Float, t: Float) {
         //Farbe des Motorads wird verändert in Abhängigkeit der Zeit mit sinuswerten
         pointLight.lightColor = Vector3f(abs(sin(t)),abs(sin(t/2)),abs(sin(t/3)))
         //Bewegung des Motorrads
@@ -178,15 +190,13 @@ class Scene(private val window: GameWindow) {
         }
 
 
-    }
-    */
+    }*/
 
-
-    //geht nicht, da die Drohne nicht wirklich da ist???
     fun update(dt: Float, t: Float) {
         //Bewegung der Drohne
         if(window.getKeyState(GLFW_KEY_W)){
-            droneRend.translateLocal(Vector3f(0.0f, 0.0f, -5*dt))
+            //z-Wert muss je nach drone-Größe angepasst werden
+            droneRend.translateLocal(Vector3f(0.0f, 0.0f, -5000*dt))
             if(window.getKeyState(GLFW_KEY_A)){
                 droneRend.rotateLocal(0.0f, 2f*dt, 0.0f)
             }
@@ -195,7 +205,7 @@ class Scene(private val window: GameWindow) {
             }
         }
         if(window.getKeyState(GLFW_KEY_S)){
-            droneRend.translateLocal(Vector3f(0.0f, 0.0f, 5*dt))
+            droneRend.translateLocal(Vector3f(0.0f, 0.0f, 5000*dt))
             if(window.getKeyState(GLFW_KEY_A)){
                 droneRend.rotateLocal(0.0f, 2f*dt, 0.0f)
             }
@@ -203,9 +213,9 @@ class Scene(private val window: GameWindow) {
                 droneRend.rotateLocal(0.0f, -2f*dt, 0.0f)
             }
         }
+     }
 
 
-    }
 
     fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {}
 
