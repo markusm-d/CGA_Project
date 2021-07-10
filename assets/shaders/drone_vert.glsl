@@ -17,13 +17,9 @@ out struct VertexData
     vec3 position;
     vec2 texture;
     vec3 normale;
-    vec3 toPointLight;
 } vertexData;
 
-//
 void main(){
-    /*vec4 pos = model_matrix * vec4(position, 1.0f);
-    vec4 nor = vec4(normale,0.0f);*/
 
     //Spieleransicht
     mat4 modelView = view_matrix * model_matrix;

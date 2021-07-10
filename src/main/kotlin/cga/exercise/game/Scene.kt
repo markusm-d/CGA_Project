@@ -111,6 +111,9 @@ class Scene(private val window: GameWindow) {
         val droneEmTex = Texture2D("assets/textures/drone_Metallic.png", true)
         val droneMeTex = Texture2D("assets/textures/drone_Emission.png", true)
         val droneRoTex = Texture2D("assets/textures/drone_Roughness.png", true)
+        val droneAlTex = Texture2D("assets/textures/drone_Albedo.png", true)
+        val droneNoTex = Texture2D("assets/textures/drone_Normal.png", true)
+        val droneOcTex = Texture2D("assets/textures/drone_Occlusion.png", true)
 
         //erzeuegn
         val groundMaterial = Material(diffTex, emitTex, specTex, 60.0f, Vector2f(64.0f,64.0f))
@@ -135,18 +138,22 @@ class Scene(private val window: GameWindow) {
         cycleRend.scaleLocal(Vector3f(0.8f))
 
         //TODO: Drohne steht seitlich? Warum?
-        droneRend.scaleLocal(Vector3f(0.0002f)) //drone ist echt groß :D
-        droneRend.translateLocal(Vector3f(0.0f,10000.0f,-1.0f))
+        //TODO: Ist die Drohne für den Shader immer noch zu grpß oder warum sieht man sie nicht?
+        // Muss aber da sein, man kann sie bewegen :D
+        droneRend.scaleLocal(Vector3f(0.00000002f)) //drone ist echt groß :D
+        droneRend.translateLocal(Vector3f(0.0f,50000000.0f,-1.0f))
         //ROtate funktioniert nicht wirklich? Drohne gedreht, aber auch Kamera und Bewegung verändert...
         //droneRend.rotateAroundPoint(0.0f,Math.toRadians(90.0f),0.0f,droneRend.getWorldPosition())
 
 
 
-        tronCamera.parent = droneRend
+        tronCamera.parent = cycleRend
+
         //Kameratransformationen
         tronCamera.rotateLocal(Math.toRadians(-35.0f), 0.0f, 0.0f)
         //Bei drone Werte wegen der Skalierung so hoch
-        tronCamera.translateLocal(Vector3f(0.0f, 1000.0f, 4000.0f))
+        tronCamera.translateLocal(Vector3f(0.0f,1.0f,4.0f))
+        //tronCamera.translateLocal(Vector3f(0.0f, 1.0f, 9000.0f))
 
         //Lichtertransformationen
         pointLight = PointLight(tronCamera.getWorldPosition(), Vector3f(1f,1f,0f))
@@ -163,8 +170,8 @@ class Scene(private val window: GameWindow) {
     fun render(dt: Float, t: Float) {
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
         //TODO: Problem wegen unterschiedlicher Shader lösen. Wenn drone-Shader genutzt, Drohne nicht zu sehen
-        /*droneShader.use()
-        droneRend.render(droneShader)*/
+        droneShader.use()
+        droneRend.render(droneShader)
         //cloudShader.use()
         //cloudRend.render(cloudShader)
         //shader Benutzung definieren
@@ -173,19 +180,18 @@ class Scene(private val window: GameWindow) {
         tronCamera.bind(staticShader)
         //mesh rendern
         //Eventuell anderer Shader nötig. Wird dargestellt, aber nicht korrekt :D
-        droneRend.render(staticShader)
+        //droneRend.render(staticShader)
         staticShader.setUniform("colorChange", Vector3f(abs(sin(t)),abs(sin(t/2)),abs(sin(t/3))))
         cycleRend.render(staticShader)
         pointLight.bind(staticShader, "byklePoint")
         frontSpotLight.bind(staticShader, "bykleSpot", tronCamera.getCalculateViewMatrix())
         staticShader.setUniform("colorChange", Vector3f(0.0f,1.0f,0.0f))
         groundRend.render(staticShader)
-
     }
 
 
 
-    /*fun update(dt: Float, t: Float) {
+    fun update(dt: Float, t: Float) {
         //Farbe des Motorads wird verändert in Abhängigkeit der Zeit mit sinuswerten
         pointLight.lightColor = Vector3f(abs(sin(t)),abs(sin(t/2)),abs(sin(t/3)))
         //Bewegung des Motorrads
@@ -209,14 +215,14 @@ class Scene(private val window: GameWindow) {
         }
 
 
-    }*/
+    }
 
-    fun update(dt: Float, t: Float) {
+    /*fun update(dt: Float, t: Float) {
         //TODO: FLughöhe der Drohne wie verändern?
         //Bewegung der Drohne
         if(window.getKeyState(GLFW_KEY_W)){
             //z-Wert muss je nach drone-Größe angepasst werden
-            droneRend.translateLocal(Vector3f(0.0f, 0.0f, -5000*dt))
+            droneRend.translateLocal(Vector3f(0.0f, 0.0f, -55000000*dt))
             if(window.getKeyState(GLFW_KEY_A)){
                 droneRend.rotateLocal(0.0f, 2f*dt, 0.0f)
             }
@@ -225,7 +231,7 @@ class Scene(private val window: GameWindow) {
             }
         }
         if(window.getKeyState(GLFW_KEY_S)){
-            droneRend.translateLocal(Vector3f(0.0f, 0.0f, 5000*dt))
+            droneRend.translateLocal(Vector3f(0.0f, 0.0f, 55000000*dt))
             if(window.getKeyState(GLFW_KEY_A)){
                 droneRend.rotateLocal(0.0f, 2f*dt, 0.0f)
             }
@@ -233,8 +239,7 @@ class Scene(private val window: GameWindow) {
                 droneRend.rotateLocal(0.0f, -2f*dt, 0.0f)
             }
         }
-     }
-
+     }*/
 
 
     fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {}
