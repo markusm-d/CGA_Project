@@ -50,7 +50,7 @@ class Scene(private val window: GameWindow) {
 
 
     private var cycleRend = ModelLoader.loadModel("assets/Light Cycle/Light Cycle/HQ_Movie cycle.obj", Math.toRadians(-90.0f),Math.toRadians(90.0f), 0.0f) ?: throw IllegalArgumentException("Could not load the model")
-
+    //private var cloudRend=ModelLoader.loadModel("assets/models/cloud.obj",0.0f,0.0f,0.0f)?: throw IllegalArgumentException("Could not load the model")
 
     //Renderables
     private var groundRend = Renderable()
@@ -63,7 +63,6 @@ class Scene(private val window: GameWindow) {
     //Lights anlegen
     private var pointLight = PointLight(Vector3f(), Vector3f())
     private var frontSpotLight = Spotlight(Vector3f(), Vector3f())
-
 
     private var oldMousePosX : Double = -1.0
     private var oldMousePosY : Double = -1.0
@@ -119,6 +118,7 @@ class Scene(private val window: GameWindow) {
         val groundMaterial = Material(diffTex, emitTex, specTex, 60.0f, Vector2f(64.0f,64.0f))
          //TODO: Material richtig auf die Drohne laden :D Shader mit mehr Texturvariablen? neues Material?
         val droneMaterial=Material(droneMeTex,droneEmTex,droneRoTex,60.0f, Vector2f(64.0f,64.0f))
+        //val droneMaterial=droneMaterial(droneAlTex,droneEmTex,droneMeTex,droneNoTex,droneOcTex,droneRoTex)
 
         //Texturparameter für Objektende
         emitTex.setTexParams(GL_REPEAT, GL_REPEAT, GL11.GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR)     //Linear = zwischen farbwerten interpolieren
@@ -128,6 +128,8 @@ class Scene(private val window: GameWindow) {
         //Mesh erzeugen
         groundMesh = Mesh(objMeshGround.vertexData, objMeshGround.indexData, vertexAttributes, groundMaterial)
         droneMesh= Mesh(objMeshDrone.vertexData,objMeshDrone.indexData,vertexAttributes,droneMaterial)
+        //Material für die Drohne. Ob es funktioniert weiß ich nicht, da die Drohne ständig unsichbar ist...
+        //droneMesh= Mesh(objMeshDrone.vertexData,objMeshDrone.indexData,vertexAttributes,null, droneMaterial)
         //cloudMesh=Mesh(objMeshCloud.vertexData,objMeshCloud.indexData,cloudVertexAttributes)
         //Meshes zu Randerable hinzufügen
         groundRend.meshList.add(groundMesh)
@@ -139,9 +141,12 @@ class Scene(private val window: GameWindow) {
 
         //TODO: Drohne steht seitlich? Warum?
         //TODO: Ist die Drohne für den Shader immer noch zu grpß oder warum sieht man sie nicht?
-        // Muss aber da sein, man kann sie bewegen :D
-        droneRend.scaleLocal(Vector3f(0.00000002f)) //drone ist echt groß :D
-        droneRend.translateLocal(Vector3f(0.0f,50000000.0f,-1.0f))
+        // Muss aber da sein, man kann sie bewegen :D 1st Person wäre jetzt einfacher :D
+        // Drohne jetzt wieder komplett weg???? oder ich bin zu blöd -_-
+        /*droneRend.scaleLocal(Vector3f(0.0000002f)) //drone ist echt groß :D
+        droneRend.translateLocal(Vector3f(0.0f,9000000.0f,-1.0f))*/
+        droneRend.scaleLocal(Vector3f(0.000000005f)) //drone ist echt groß :D
+        droneRend.translateLocal(Vector3f(0.0f,100000000.0f,-1.0f))
         //ROtate funktioniert nicht wirklich? Drohne gedreht, aber auch Kamera und Bewegung verändert...
         //droneRend.rotateAroundPoint(0.0f,Math.toRadians(90.0f),0.0f,droneRend.getWorldPosition())
 
@@ -163,15 +168,15 @@ class Scene(private val window: GameWindow) {
         // Spotlight als Frontlicht setzen
         frontSpotLight = Spotlight(Vector3f(0.0f, 0.0f, -2.0f), Vector3f(1.0f))
         frontSpotLight.rotateLocal(Math.toRadians(-10.0f), Math.PI.toFloat(), 0.0f)
-        frontSpotLight.parent = cycleRend
+        frontSpotLight.parent = droneRend
     }
 
 
     fun render(dt: Float, t: Float) {
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
         //TODO: Problem wegen unterschiedlicher Shader lösen. Wenn drone-Shader genutzt, Drohne nicht zu sehen
-        droneShader.use()
-        droneRend.render(droneShader)
+        //droneShader.use()
+        //droneRend.render(droneShader)
         //cloudShader.use()
         //cloudRend.render(cloudShader)
         //shader Benutzung definieren
@@ -180,7 +185,7 @@ class Scene(private val window: GameWindow) {
         tronCamera.bind(staticShader)
         //mesh rendern
         //Eventuell anderer Shader nötig. Wird dargestellt, aber nicht korrekt :D
-        //droneRend.render(staticShader)
+        droneRend.render(staticShader)
         staticShader.setUniform("colorChange", Vector3f(abs(sin(t)),abs(sin(t/2)),abs(sin(t/3))))
         cycleRend.render(staticShader)
         pointLight.bind(staticShader, "byklePoint")
@@ -213,8 +218,6 @@ class Scene(private val window: GameWindow) {
                 cycleRend.rotateLocal(0.0f, -2f*dt, 0.0f)
             }
         }
-
-
     }
 
     /*fun update(dt: Float, t: Float) {
@@ -239,7 +242,7 @@ class Scene(private val window: GameWindow) {
                 droneRend.rotateLocal(0.0f, -2f*dt, 0.0f)
             }
         }
-     }*/
+    }*/
 
 
     fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {}
