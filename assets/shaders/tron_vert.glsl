@@ -47,7 +47,4 @@ void main(){
     vertexData.position = -pos.xyz;
     vertexData.texture = tc * tcMultiplier;
     vertexData.normale = nor.xyz;
-
-
-
 }
