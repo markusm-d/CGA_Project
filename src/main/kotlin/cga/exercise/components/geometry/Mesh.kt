@@ -70,9 +70,11 @@ class Mesh(vertexdata: FloatArray, indexdata: IntArray, attributes: Array<Vertex
         }
         fun render(shaderProgram: ShaderProgram) {
             material?.bind(shaderProgram)
+            material2?.bind(shaderProgram)
             render()
 
         }
+
 
         /**
          * Deletes the previously allocated OpenGL objects for this mesh

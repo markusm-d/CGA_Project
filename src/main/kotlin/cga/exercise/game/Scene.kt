@@ -29,33 +29,33 @@ class Scene(private val window: GameWindow) {
     private val staticShader: ShaderProgram
     //Shader für Drohne und Wolken. Leider funktioniert noch nicht allesso wie es sollte...
     private val droneShader:ShaderProgram
-    private val cloudShader:ShaderProgram
+    private val cloudShader:ShaderProgram //TODO: Shader muss noch angepasst werde. Eventuell wegen der ViewMatrix o.ä. schauen?
 
     //ObjectLoader
-    //TODO: für die Wolken ist definitv ein eigener Shader notwendig, da sie nur über Positions- und Normal-Vertecies verfügen!!
+
      //Object laden
     private val resGround : OBJLoader.OBJResult = OBJLoader.loadOBJ("assets/models/ground.obj")
     private val resDrone:OBJLoader.OBJResult=OBJLoader.loadOBJ("assets/models/drone.obj")
-    //private val resCloud:OBJLoader.OBJResult=OBJLoader.loadOBJ("assets/models/clous.obj")
+    private val resCloud:OBJLoader.OBJResult=OBJLoader.loadOBJ("assets/models/cloud.obj")
 
      //Mesh für die Daten von Vertex und Index laden
     private val objMeshGround : OBJLoader.OBJMesh = resGround.objects[0].meshes[0]
     private val objMeshDrone:OBJLoader.OBJMesh=resDrone.objects[0].meshes[0]
-    //private val objMeshCloud:OBJLoader.OBJMesh=resCloud.objects[0].meshes[0]
+    private val objMeshCloud:OBJLoader.OBJMesh=resCloud.objects[0].meshes[0]
 
     //Meshes
     private var groundMesh : Mesh
     private var droneMesh:Mesh
-    //private val cloudMesh:Mesh
+    private val cloudMesh:Mesh
 
-
+    //TODO: eventuell das Objekt in seperaten Ordner und an ModellLoder anpassen?
     private var cycleRend = ModelLoader.loadModel("assets/Light Cycle/Light Cycle/HQ_Movie cycle.obj", Math.toRadians(-90.0f),Math.toRadians(90.0f), 0.0f) ?: throw IllegalArgumentException("Could not load the model")
     //private var cloudRend=ModelLoader.loadModel("assets/models/cloud.obj",0.0f,0.0f,0.0f)?: throw IllegalArgumentException("Could not load the model")
 
     //Renderables
     private var groundRend = Renderable()
     private val droneRend=Renderable()
-    //private val cloudRend= Renderable()
+    private val cloudRend= Renderable()
 
     //Camera
     private var tronCamera  = TronCamera()
@@ -88,18 +88,18 @@ class Scene(private val window: GameWindow) {
 
         //AttributeVertex definieren
         val stride = 8 * 4
-        //val cloudStride=6*4
+        val cloudStride=6*4
 
         val vertexAttributePosition = VertexAttribute(3, GL_FLOAT, stride, 0)
         val vertexAttributeTexture = VertexAttribute(2, GL_FLOAT, stride, 3*4)
         val vertexAttributeColor = VertexAttribute(3, GL_FLOAT, stride, 5*4)
 
-        //val cloudVertexAttributePosition=VertexAttribute(3, GL_FLOAT,cloudStride,0)
-        //val cloudVertexAttributeColor=VertexAttribute(3, GL_FLOAT,cloudStride,3*4)
+        val cloudVertexAttributePosition=VertexAttribute(3, GL_FLOAT,cloudStride,0)
+        val cloudVertexAttributeNormals=VertexAttribute(3, GL_FLOAT,cloudStride,3*4)
 
         //Attribute zusammenfügen
         val vertexAttributes = arrayOf(vertexAttributePosition, vertexAttributeTexture, vertexAttributeColor)
-        //val cloudVertexAttributes= arrayOf(cloudVertexAttributePosition,cloudVertexAttributeColor)
+        val cloudVertexAttributes= arrayOf(cloudVertexAttributePosition,cloudVertexAttributeNormals)
 
         //Material
          //laden
@@ -124,17 +124,19 @@ class Scene(private val window: GameWindow) {
         emitTex.setTexParams(GL_REPEAT, GL_REPEAT, GL11.GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR)     //Linear = zwischen farbwerten interpolieren
         diffTex.setTexParams(GL_REPEAT, GL_REPEAT, GL11.GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR)
         specTex.setTexParams(GL_REPEAT, GL_REPEAT, GL11.GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR)
+        //TODO: Auch Prameter setzen müssen für Drohne? Eigentlich nicht, oder?
 
         //Mesh erzeugen
         groundMesh = Mesh(objMeshGround.vertexData, objMeshGround.indexData, vertexAttributes, groundMaterial)
         droneMesh= Mesh(objMeshDrone.vertexData,objMeshDrone.indexData,vertexAttributes,droneMaterial)
         //Material für die Drohne. Ob es funktioniert weiß ich nicht, da die Drohne ständig unsichbar ist...
         //droneMesh= Mesh(objMeshDrone.vertexData,objMeshDrone.indexData,vertexAttributes,null, droneMaterial)
-        //cloudMesh=Mesh(objMeshCloud.vertexData,objMeshCloud.indexData,cloudVertexAttributes)
+        cloudMesh=Mesh(objMeshCloud.vertexData,objMeshCloud.indexData,cloudVertexAttributes)
+
         //Meshes zu Randerable hinzufügen
         groundRend.meshList.add(groundMesh)
         droneRend.meshList.add(droneMesh)
-        //cloudRend.meshList.add(cloudMesh)
+        cloudRend.meshList.add(cloudMesh)
 
         //Bike skalieren
         cycleRend.scaleLocal(Vector3f(0.8f))
@@ -142,23 +144,24 @@ class Scene(private val window: GameWindow) {
         //TODO: Drohne steht seitlich? Warum?
         //TODO: Ist die Drohne für den Shader immer noch zu grpß oder warum sieht man sie nicht?
         // Muss aber da sein, man kann sie bewegen :D 1st Person wäre jetzt einfacher :D
-        // Drohne jetzt wieder komplett weg???? oder ich bin zu blöd -_-
-        /*droneRend.scaleLocal(Vector3f(0.0000002f)) //drone ist echt groß :D
-        droneRend.translateLocal(Vector3f(0.0f,9000000.0f,-1.0f))*/
-        droneRend.scaleLocal(Vector3f(0.000000005f)) //drone ist echt groß :D
-        droneRend.translateLocal(Vector3f(0.0f,100000000.0f,-1.0f))
-        //ROtate funktioniert nicht wirklich? Drohne gedreht, aber auch Kamera und Bewegung verändert...
+        //Drohne in tronShader
+        droneRend.scaleLocal(Vector3f(0.00025f)) //drone ist echt groß :D
+        droneRend.translateLocal(Vector3f(0.0f,10000.0f,-1.0f))
+        //Drohne im Drohnenshader -> Versuch Kann Drohne nicht finden, vielleicht hast du ja mehr Erfolg
+        //droneRend.scaleLocal(Vector3f(0.0025f)) //drone ist echt groß :D
+        //droneRend.translateLocal(Vector3f(0.0f,1500.0f,-1.0f))
+        //Rotate funktioniert nicht wirklich? Drohne gedreht, aber auch Kamera und Bewegung verändert...
         //droneRend.rotateAroundPoint(0.0f,Math.toRadians(90.0f),0.0f,droneRend.getWorldPosition())
 
 
 
-        tronCamera.parent = cycleRend
+        tronCamera.parent = droneRend
 
         //Kameratransformationen
         tronCamera.rotateLocal(Math.toRadians(-35.0f), 0.0f, 0.0f)
+        //tronCamera.translateLocal(Vector3f(0.0f,1.0f,4.0f))
         //Bei drone Werte wegen der Skalierung so hoch
-        tronCamera.translateLocal(Vector3f(0.0f,1.0f,4.0f))
-        //tronCamera.translateLocal(Vector3f(0.0f, 1.0f, 9000.0f))
+        tronCamera.translateLocal(Vector3f(0.0f, 1000.0f, 4000.0f))
 
         //Lichtertransformationen
         pointLight = PointLight(tronCamera.getWorldPosition(), Vector3f(1f,1f,0f))
@@ -174,24 +177,27 @@ class Scene(private val window: GameWindow) {
 
     fun render(dt: Float, t: Float) {
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
-        //TODO: Problem wegen unterschiedlicher Shader lösen. Wenn drone-Shader genutzt, Drohne nicht zu sehen
+        //TODO: Problem wegen unterschiedlicher Shader lösen. Wenn drone-Shader genutzt, Drohne nicht zu sehen.
+        // Muss am Shader liegen...
         //droneShader.use()
         //droneRend.render(droneShader)
-        //cloudShader.use()
-        //cloudRend.render(cloudShader)
+
         //shader Benutzung definieren
         staticShader.use()
         //Kamera binden
         tronCamera.bind(staticShader)
         //mesh rendern
-        //Eventuell anderer Shader nötig. Wird dargestellt, aber nicht korrekt :D
-        droneRend.render(staticShader)
+         //Eventuell anderer Shader nötig. Wird dargestellt, aber nicht korrekt :D
+            droneRend.render(staticShader)
         staticShader.setUniform("colorChange", Vector3f(abs(sin(t)),abs(sin(t/2)),abs(sin(t/3))))
         cycleRend.render(staticShader)
         pointLight.bind(staticShader, "byklePoint")
         frontSpotLight.bind(staticShader, "bykleSpot", tronCamera.getCalculateViewMatrix())
         staticShader.setUniform("colorChange", Vector3f(0.0f,1.0f,0.0f))
         groundRend.render(staticShader)
+        //TODO: Ja, da ist jetzt was, aber richtig sieht es nicht aus :D
+        cloudShader.use()
+        cloudRend.render(cloudShader)
     }
 
 

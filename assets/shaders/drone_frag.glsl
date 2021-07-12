@@ -34,7 +34,7 @@ void main(){
 
     //Versuch drone sichtbar zu machen. Fehlgeschlagen
     //Mal alle Texturen versuchr einzubinden
-    vec3 colorResult=emissionCol*albedoCol*metallicCol*normalCol*occlusionCol*rougnessCol;
+    vec3 colorResult=emissionCol/**albedoCol*metallicCol*normalCol*occlusionCol*rougnessCol*/;
 
     color = vec4(colorResult,1.0);
 
