@@ -155,7 +155,7 @@ class Scene(private val window: GameWindow) {
 
 
 
-        tronCamera.parent = droneRend
+        tronCamera.parent = cycleRend
 
         //Kameratransformationen
         tronCamera.rotateLocal(Math.toRadians(-35.0f), 0.0f, 0.0f)
