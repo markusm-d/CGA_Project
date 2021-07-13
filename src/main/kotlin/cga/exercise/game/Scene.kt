@@ -153,15 +153,18 @@ class Scene(private val window: GameWindow) {
         //Rotate funktioniert nicht wirklich? Drohne gedreht, aber auch Kamera und Bewegung verändert...
         //droneRend.rotateAroundPoint(0.0f,Math.toRadians(90.0f),0.0f,droneRend.getWorldPosition())
 
+        //TODO: Cloud ist definitv iw da. Größe muss jetzt noch angepasst werden. bzw. Shaderverarbeitung anpassen?
+        cloudRend.scaleLocal(Vector3f(0.00001f))
+        cloudRend.translateLocal(Vector3f(0.0f,50000.0f,-1.0f))
 
-
-        tronCamera.parent = cycleRend
+        tronCamera.parent = cloudRend
 
         //Kameratransformationen
         tronCamera.rotateLocal(Math.toRadians(-35.0f), 0.0f, 0.0f)
-        //tronCamera.translateLocal(Vector3f(0.0f,1.0f,4.0f))
+        //Werte für Bike
+        tronCamera.translateLocal(Vector3f(0.0f,1.0f,4.0f))
         //Bei drone Werte wegen der Skalierung so hoch
-        tronCamera.translateLocal(Vector3f(0.0f, 1000.0f, 4000.0f))
+        //tronCamera.translateLocal(Vector3f(0.0f, 1000.0f, 4000.0f))
 
         //Lichtertransformationen
         pointLight = PointLight(tronCamera.getWorldPosition(), Vector3f(1f,1f,0f))
@@ -179,8 +182,8 @@ class Scene(private val window: GameWindow) {
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
         //TODO: Problem wegen unterschiedlicher Shader lösen. Wenn drone-Shader genutzt, Drohne nicht zu sehen.
         // Muss am Shader liegen...
-        //droneShader.use()
-        //droneRend.render(droneShader)
+        droneShader.use()
+        droneRend.render(droneShader)
 
         //shader Benutzung definieren
         staticShader.use()
@@ -188,14 +191,15 @@ class Scene(private val window: GameWindow) {
         tronCamera.bind(staticShader)
         //mesh rendern
          //Eventuell anderer Shader nötig. Wird dargestellt, aber nicht korrekt :D
-            droneRend.render(staticShader)
+            //droneRend.render(staticShader)
         staticShader.setUniform("colorChange", Vector3f(abs(sin(t)),abs(sin(t/2)),abs(sin(t/3))))
         cycleRend.render(staticShader)
         pointLight.bind(staticShader, "byklePoint")
         frontSpotLight.bind(staticShader, "bykleSpot", tronCamera.getCalculateViewMatrix())
         staticShader.setUniform("colorChange", Vector3f(0.0f,1.0f,0.0f))
         groundRend.render(staticShader)
-        //TODO: Ja, da ist jetzt was, aber richtig sieht es nicht aus :D
+        //TODO: Ja, da ist jetzt was, aber richtig sieht es nicht aus :D bzw. gerade sieht man nichts...
+        // nur was mit dem staticShader gerendert wird ist sichtbar???
         cloudShader.use()
         cloudRend.render(cloudShader)
     }

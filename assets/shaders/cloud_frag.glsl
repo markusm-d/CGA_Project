@@ -6,7 +6,9 @@ in vec3 col;
 out vec4 color;
 
 void main(){
-    color = vec4(col,1.0f);
+    //color = vec4(col,1.0f);
+    //so ist Wolke zumindest Weiß :D
+    color=vec4(1.0f);
 }
 //Versuch, Shader anzupassen --> Bild schwarz???
 /*    #version 330 core
