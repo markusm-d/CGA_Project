@@ -14,6 +14,9 @@ uniform sampler2D metallic;
 uniform sampler2D normal;
 uniform sampler2D occlusion;
 uniform sampler2D roughness;
+uniform float shininess;
+
+uniform vec3 colorChange;
 
 
 //fragment shader output
@@ -33,9 +36,8 @@ void main(){
     vec3 occlusionCol = texture(occlusion, vertexData.texture).rgb;
     vec3 rougnessCol = texture(roughness, vertexData.texture).rgb;
 
-    //Versuch drone sichtbar zu machen. Fehlgeschlagen
-    //Mal alle Texturen versuchr einzubinden
-    vec3 colorResult=emissionCol*albedoCol*metallicCol*normalCol*occlusionCol*rougnessCol;
+    //Versuch drone sichtbar zu machen
+    vec3 colorResult=metallicCol*colorChange;
 
     color = vec4(colorResult,1.0);
 

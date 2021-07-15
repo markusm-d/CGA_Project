@@ -6,7 +6,6 @@ in struct VertexData
     vec3 position;
     vec3 normale;
 } vertexData;
-
 //fragment shader output
 out vec4 color;
 

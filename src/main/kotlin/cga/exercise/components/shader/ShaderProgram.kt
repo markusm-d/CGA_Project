@@ -1,5 +1,6 @@
 package cga.exercise.components.shader
 
+import cga.exercise.components.texture.Texture2D
 import org.joml.*
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL11
@@ -52,7 +53,7 @@ class ShaderProgram(vertexShaderPath: String, fragmentShaderPath: String) {
         }
         return false
     }
-
+    //TODO: eventuell iw ein setUnifrom für drone?
     fun setUniform(name: String, value: Vector2f): Boolean {
         if (programID == 0) return false
         val loc = GL20.glGetUniformLocation(programID, name)

@@ -13,6 +13,7 @@ class droneMaterial (var albedo: Texture2D,
                      var normal: Texture2D,
                      var occlusion: Texture2D,
                      var roughness: Texture2D,
+                     var shininess: Float = 50.0f,
 var tcMultiplier : Vector2f = Vector2f(1.0f)){
 
     fun bind(shaderProgram: ShaderProgram) {
@@ -32,6 +33,7 @@ var tcMultiplier : Vector2f = Vector2f(1.0f)){
         shaderProgram.setUniform("occlusion",4)
         shaderProgram.setUniform("roughness",5)
         shaderProgram.setUniform("tcMultiplier", tcMultiplier)
+        shaderProgram.setUniform("shininess", shininess)
 
     }
 
