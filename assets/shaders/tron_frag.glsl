@@ -8,6 +8,7 @@ in struct VertexData
     vec3 normale;
     vec3 toPointLight;
     vec3 toFrontSpotLight;
+
 } vertexData;
 
 //Material
@@ -71,6 +72,7 @@ void main(){
     vec3 pointLightPosition = vertexData.toPointLight/pointLightPositionLength;
     float frontSpotLightPositionLength = length(vertexData.toFrontSpotLight);
     vec3 frontSpotLightPosition = vertexData.toFrontSpotLight/frontSpotLightPositionLength;
+
     //Texturverarbeitung
     vec3 diffCol = texture(diff, vertexData.texture).rgb;
     vec3 emitCol = texture(emit, vertexData.texture).rgb;

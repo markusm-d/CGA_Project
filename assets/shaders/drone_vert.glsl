@@ -12,11 +12,14 @@ uniform mat4 proj_matrix;
 //für Textur
 uniform vec2 tcMultiplier;
 
+//uniform vec3 droneSpotLightPosition;
+
 out struct VertexData
 {
     vec3 position;
     vec2 texture;
     vec3 normale;
+    //vec3 toSpotLight;
 } vertexData;
 
 void main(){
@@ -26,6 +29,9 @@ void main(){
     //Postiton an View angepasst
     vec4 pos =  modelView * vec4(position, 1.0f);
     vec4 nor = inverse(transpose(modelView)) * vec4(normale, 0.0f);
+
+    //vec4 droneLightPosition=view_matrix*vec4(droneSpotLightPosition,1.0);
+    //vertexData.toSpotLight=(droneLightPosition-pos).xyz;
 
     gl_Position = proj_matrix * pos;
     vertexData.position = -pos.xyz;

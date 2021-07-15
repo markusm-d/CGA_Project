@@ -15,7 +15,7 @@ uniform vec2 tcMultiplier;
 //Lichtpositionen
 uniform vec3 byklePointLightPosition;
 uniform vec3 bykleSpotLightPosition;
-uniform vec3 bykleSpot2LightPosition;
+
 
 
 out struct VertexData
@@ -25,6 +25,7 @@ out struct VertexData
     vec3 normale;
     vec3 toPointLight;
     vec3 toFrontSpotLight;
+
 } vertexData;
 
 

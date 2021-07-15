@@ -15,8 +15,8 @@ uniform vec2 tcMultiplier;
 //Lichtpositionen
 uniform vec3 byklePointLightPosition;
 uniform vec3 bykleSpotLightPosition;
-uniform vec3 bykleSpot2LightPosition;
 
+//uniform vec3 droneSpotLightPosition;
 
 out struct VertexData
 {
@@ -25,6 +25,7 @@ out struct VertexData
     vec3 normale;
     vec3 toPointLight;
     vec3 toFrontSpotLight;
+    //vec3 toSpotLight;
 } vertexData;
 
 
@@ -42,6 +43,9 @@ void main(){
 
     vec4 lp2 = view_matrix * vec4(bykleSpotLightPosition, 1.0);
     vertexData.toFrontSpotLight = (lp2 - pos).xyz;
+
+    //vec4 droneLightPosition=view_matrix*vec4(droneSpotLightPosition,1.0);
+    //vertexData.toSpotLight=(droneLightPosition-pos).xyz;
 
     gl_Position = proj_matrix * pos;
     vertexData.position = -pos.xyz;

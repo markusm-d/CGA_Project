@@ -67,6 +67,7 @@ class Scene(private val window: GameWindow) {
     //Lights anlegen
     private var pointLight = PointLight(Vector3f(), Vector3f())
     private var frontSpotLight = Spotlight(Vector3f(), Vector3f())
+    private var droneSpot = Spotlight(Vector3f(), Vector3f())
 
     private var oldMousePosX : Double = -1.0
     private var oldMousePosY : Double = -1.0
@@ -183,12 +184,18 @@ class Scene(private val window: GameWindow) {
         frontSpotLight = Spotlight(Vector3f(0.0f, 0.0f, -2.0f), Vector3f(1.0f))
         frontSpotLight.rotateLocal(Math.toRadians(-10.0f), Math.PI.toFloat(), 0.0f)
         frontSpotLight.parent = cycleRend
+
+        droneSpot=Spotlight(Vector3f(0.0f, 0.0f, -2.0f), Vector3f(1.0f))
+        droneSpot.rotateLocal(Math.toRadians(-10.0f), Math.PI.toFloat(), 0.0f)
+        droneSpot.parent = droneRend
+
+
     }
 
 
     fun render(dt: Float, t: Float) {
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
-        //TODO: Problem wegen unterschiedlicher Shader lösen.
+        //TODO: Problem wegen unterschiedlicher Shader lösen!
 /*        droneShader.use()
         droneShader.setUniform("colorChange", Vector3f(1.0f))
         droneRend.render(droneShader)*/
@@ -213,6 +220,7 @@ class Scene(private val window: GameWindow) {
 
         //TODO: Ja, da ist jetzt was, aber richtig sieht es nicht aus :D bzw. gerade sieht man nichts...
         // nur was mit dem staticShader gerendert wird ist sichtbar???
+        //eventuell was mit dem Licht zu tun?
 /*        cloudShader.use()
         cloudShader.setUniform("colorChange", Vector3f(1.0f))
         cloudRend.render(cloudShader)*/
