@@ -84,6 +84,7 @@ class Scene(private val window: GameWindow) {
         bigStaticShader= ShaderProgram("assets/shaders/bigVertexShader.glsl", "assets/shaders/tron_frag.glsl")
         bigDroneShader=ShaderProgram("assets/shaders/bigVertexShader.glsl","assets/shaders/drone_frag.glsl")
         //bigCloudShader= ShaderProgram("assets/shaders/tron_frag.glsl","assets/shaders/cloud_frag.glsl")
+
         //initial opengl state
         //glClearColor(0.6f, 1.0f, 1.0f, 1.0f); GLError.checkThrow()
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f); GLError.checkThrow()
@@ -126,7 +127,7 @@ class Scene(private val window: GameWindow) {
         //erzeuegn
         val groundMaterial = Material(diffTex, emitTex, specTex, 60.0f, Vector2f(64.0f,64.0f))
          //TODO: Material richtig auf die Drohne laden :D Shader mit mehr Texturvariablen? neues Material?
-        val droneMaterial=Material(droneAlTex,droneNoTex,droneRoTex,60.0f, Vector2f(64.0f,64.0f))
+        val droneMaterial=Material(droneMeTex,droneEmTex,droneRoTex,60.0f, Vector2f(64.0f,64.0f))
         //val droneMaterial=droneMaterial(droneAlTex,droneEmTex,droneMeTex,droneNoTex,droneOcTex,droneRoTex,60.0f, Vector2f(64.0f,64.0f))
 
         //Texturparameter für Objektende
@@ -188,7 +189,7 @@ class Scene(private val window: GameWindow) {
     fun render(dt: Float, t: Float) {
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
         //TODO: Problem wegen unterschiedlicher Shader lösen.
-        /*droneShader.use()
+/*        droneShader.use()
         droneShader.setUniform("colorChange", Vector3f(1.0f))
         droneRend.render(droneShader)*/
 
@@ -198,7 +199,7 @@ class Scene(private val window: GameWindow) {
         tronCamera.bind(staticShader)
         //mesh rendern
          //Eventuell anderer Shader nötig. Wird dargestellt, aber nicht korrekt :D
-        //staticShader.setUniform("colorChange", Vector3f(1.0f))
+        staticShader.setUniform("colorChange", Vector3f(1.0f))
         droneRend.render(staticShader)
         staticShader.setUniform("colorChange", Vector3f(abs(sin(t)),abs(sin(t/2)),abs(sin(t/3))))
         cycleRend.render(staticShader)
@@ -207,12 +208,13 @@ class Scene(private val window: GameWindow) {
         staticShader.setUniform("colorChange", Vector3f(0.0f,1.0f,0.0f))
         groundRend.render(staticShader)
         //So kann man tatsächlich auch die Wolke sehen :D
-        staticShader.setUniform("colorChange", Vector3f(1.0f))
+        staticShader.setUniform("colorChange", Vector3f(1.0f,0.0f,0.0f))
         cloudRend.render(staticShader)
 
         //TODO: Ja, da ist jetzt was, aber richtig sieht es nicht aus :D bzw. gerade sieht man nichts...
         // nur was mit dem staticShader gerendert wird ist sichtbar???
-        /*cloudShader.use()
+/*        cloudShader.use()
+        cloudShader.setUniform("colorChange", Vector3f(1.0f))
         cloudRend.render(cloudShader)*/
 
 /*        //TODO: Ja, ein großer VertexShader funktioniert auch nicht besser, Wolke kann den eh nicht nutzen!?!
