@@ -1,4 +1,3 @@
-
 package cga.exercise.game
 
 
@@ -30,6 +29,11 @@ class Scene(private val window: GameWindow) {
     //Shader für Drohne und Wolken. Leider funktioniert noch nicht allesso wie es sollte...
     private val droneShader:ShaderProgram
     private val cloudShader:ShaderProgram //TODO: Shader muss noch angepasst werde. Eventuell wegen der ViewMatrix o.ä. schauen?
+    //Testshader -> komische Fehlermeldung???
+    private val bigStaticShader:ShaderProgram
+    private val bigDroneShader:ShaderProgram
+    //private val bigCloudShader:ShaderProgram
+
 
     //ObjectLoader
 
@@ -75,6 +79,9 @@ class Scene(private val window: GameWindow) {
         droneShader= ShaderProgram("assets/shaders/drone_vert.glsl","assets/shaders/drone_frag.glsl")
         cloudShader= ShaderProgram("assets/shaders/cloud_vert.glsl","assets/shaders/cloud_frag.glsl")
 
+        bigStaticShader= ShaderProgram("assets/shaders/bigVertexShader.glsl", "assets/shaders/tron_frag.glsl")
+        bigDroneShader=ShaderProgram("assets/shaders/bigVertexShader.glsl","assets/shaders/drone_frag.glsl")
+        //bigCloudShader= ShaderProgram("assets/shaders/tron_frag.glsl","assets/shaders/cloud_frag.glsl")
         //initial opengl state
         //glClearColor(0.6f, 1.0f, 1.0f, 1.0f); GLError.checkThrow()
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f); GLError.checkThrow()
@@ -153,11 +160,12 @@ class Scene(private val window: GameWindow) {
         //Rotate funktioniert nicht wirklich? Drohne gedreht, aber auch Kamera und Bewegung verändert...
         //droneRend.rotateAroundPoint(0.0f,Math.toRadians(90.0f),0.0f,droneRend.getWorldPosition())
 
+        //TODO: eventuell einen großen Vertex-Shader????
         //TODO: Cloud ist definitv iw da. Größe muss jetzt noch angepasst werden. bzw. Shaderverarbeitung anpassen?
         cloudRend.scaleLocal(Vector3f(0.00001f))
         cloudRend.translateLocal(Vector3f(0.0f,50000.0f,-1.0f))
 
-        tronCamera.parent = cloudRend
+        tronCamera.parent = droneRend
 
         //Kameratransformationen
         tronCamera.rotateLocal(Math.toRadians(-35.0f), 0.0f, 0.0f)
@@ -193,7 +201,7 @@ class Scene(private val window: GameWindow) {
          //Eventuell anderer Shader nötig. Wird dargestellt, aber nicht korrekt :D
             //droneRend.render(staticShader)
         staticShader.setUniform("colorChange", Vector3f(abs(sin(t)),abs(sin(t/2)),abs(sin(t/3))))
-        cycleRend.render(staticShader)
+        //cycleRend.render(staticShader)
         pointLight.bind(staticShader, "byklePoint")
         frontSpotLight.bind(staticShader, "bykleSpot", tronCamera.getCalculateViewMatrix())
         staticShader.setUniform("colorChange", Vector3f(0.0f,1.0f,0.0f))
@@ -202,11 +210,26 @@ class Scene(private val window: GameWindow) {
         // nur was mit dem staticShader gerendert wird ist sichtbar???
         cloudShader.use()
         cloudRend.render(cloudShader)
+
+       /* //TODO: Ja, ein großer VertexShader funktioniert auch nicht besser, Wolke kann den eh nicht nutzen!?!
+        bigDroneShader.use()
+        droneRend.render(bigDroneShader)
+        bigStaticShader.use()
+        tronCamera.bind(bigStaticShader)
+        bigStaticShader.setUniform("colorChange", Vector3f(abs(sin(t)),abs(sin(t/2)),abs(sin(t/3))))
+        cycleRend.render(bigStaticShader)
+        pointLight.bind(bigStaticShader, "byklePoint")
+        frontSpotLight.bind(bigStaticShader, "bykleSpot", tronCamera.getCalculateViewMatrix())
+        bigStaticShader.setUniform("colorChange", Vector3f(0.0f,1.0f,0.0f))
+        groundRend.render(bigStaticShader)
+        //bigCloudShader.use()
+        //cloudRend.render(bigCloudShader)
+*/
     }
 
 
 
-    fun update(dt: Float, t: Float) {
+/*    fun update(dt: Float, t: Float) {
         //Farbe des Motorads wird verändert in Abhängigkeit der Zeit mit sinuswerten
         pointLight.lightColor = Vector3f(abs(sin(t)),abs(sin(t/2)),abs(sin(t/3)))
         //Bewegung des Motorrads
@@ -228,14 +251,22 @@ class Scene(private val window: GameWindow) {
                 cycleRend.rotateLocal(0.0f, -2f*dt, 0.0f)
             }
         }
-    }
+    }*/
 
-    /*fun update(dt: Float, t: Float) {
+    fun update(dt: Float, t: Float) {
         //TODO: FLughöhe der Drohne wie verändern?
         //Bewegung der Drohne
+        //Drohne sinkt ab
+        if (window.getKeyState(GLFW_KEY_LEFT_SHIFT)){
+            droneRend.translateLocal(Vector3f(0.0f,-5000.0f*dt,0.0f))
+        }
+        //Drohne steigt auf
+        if (window.getKeyState(GLFW_KEY_SPACE)){
+            droneRend.translateLocal(Vector3f(0.0f,5000.0f*dt,0.0f))
+        }
         if(window.getKeyState(GLFW_KEY_W)){
             //z-Wert muss je nach drone-Größe angepasst werden
-            droneRend.translateLocal(Vector3f(0.0f, 0.0f, -55000000*dt))
+            droneRend.translateLocal(Vector3f(0.0f, 0.0f, -5000*dt))
             if(window.getKeyState(GLFW_KEY_A)){
                 droneRend.rotateLocal(0.0f, 2f*dt, 0.0f)
             }
@@ -244,7 +275,7 @@ class Scene(private val window: GameWindow) {
             }
         }
         if(window.getKeyState(GLFW_KEY_S)){
-            droneRend.translateLocal(Vector3f(0.0f, 0.0f, 55000000*dt))
+            droneRend.translateLocal(Vector3f(0.0f, 0.0f, 5000*dt))
             if(window.getKeyState(GLFW_KEY_A)){
                 droneRend.rotateLocal(0.0f, 2f*dt, 0.0f)
             }
@@ -252,7 +283,7 @@ class Scene(private val window: GameWindow) {
                 droneRend.rotateLocal(0.0f, -2f*dt, 0.0f)
             }
         }
-    }*/
+    }
 
 
     fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {}

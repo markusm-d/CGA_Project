@@ -22,7 +22,8 @@ out vec4 color;
 
 void main(){
 
-    vec3 n=normalize(vertexData.normale);
+    vec3 normale = normalize(vertexData.normale);
+    vec3 position = normalize(vertexData.position);
 
     //Texturverarbeitung
     vec3 albedoCol = texture(albedo, vertexData.texture).rgb;
@@ -34,7 +35,7 @@ void main(){
 
     //Versuch drone sichtbar zu machen. Fehlgeschlagen
     //Mal alle Texturen versuchr einzubinden
-    vec3 colorResult=emissionCol/**albedoCol*metallicCol*normalCol*occlusionCol*rougnessCol*/;
+    vec3 colorResult=emissionCol*albedoCol*metallicCol*normalCol*occlusionCol*rougnessCol;
 
     color = vec4(colorResult,1.0);
 
