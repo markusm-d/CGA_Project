@@ -203,13 +203,8 @@ class Scene(private val window: GameWindow) {
         droneSpotLight.bind(droneShader,"bykleSpot",tronCamera.getCalculateViewMatrix())
         droneRend.render(droneShader)
 
-/*        bigDroneShader.use()
-        tronCamera.bind(bigDroneShader)
-        bigDroneShader.setUniform("colorChange", Vector3f(0.0f,0.0f,1.0f))
-        droneRend.render(bigDroneShader)*/
-        //groundRend.render(droneShader)
         //shader Benutzung definieren
- /*       staticShader.use()
+        staticShader.use()
         //Kamera binden
         tronCamera.bind(staticShader)
         //mesh rendern
@@ -226,7 +221,6 @@ class Scene(private val window: GameWindow) {
         groundRend.render(staticShader)
         //So kann man tatsächlich auch die Wolke sehen :D
         staticShader.setUniform("colorChange", Vector3f(1.0f,0.0f,0.0f))
-        cloudRend.render(staticShader)*/
 
 
         //TODO: Ja, da ist jetzt was, aber richtig sieht es nicht aus :D bzw. gerade sieht man nichts...
