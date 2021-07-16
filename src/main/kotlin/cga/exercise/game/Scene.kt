@@ -163,16 +163,16 @@ class Scene(private val window: GameWindow) {
 
         //TODO: Cloud ist definitv iw da
         cloudRend.scaleLocal(Vector3f(0.0025f))
-        cloudRend.translateLocal(Vector3f(0.0f,50.0f,-1.0f))
+        cloudRend.translateLocal(Vector3f(500.0f,50.0f,-1.0f))
 
-        tronCamera.parent = cloudRend
+        tronCamera.parent = droneRend
 
         //Kameratransformationen
         tronCamera.rotateLocal(Math.toRadians(-35.0f), 0.0f, 0.0f)
         //Werte für Bike
-        tronCamera.translateLocal(Vector3f(0.0f,1.0f,4.0f))
+        //tronCamera.translateLocal(Vector3f(0.0f,1.0f,4.0f))
         //Bei drone Werte wegen der Skalierung so hoch
-        //tronCamera.translateLocal(Vector3f(0.0f, 1.0f, 4000.0f))
+        tronCamera.translateLocal(Vector3f(0.0f, 1.0f, 4000.0f))
 
         //Lichtertransformationen
         pointLight = PointLight(tronCamera.getWorldPosition(), Vector3f(1f,1f,0f))
@@ -244,8 +244,29 @@ class Scene(private val window: GameWindow) {
     }
 
 
+    //Theorie: Position von zwei Objekten abfragen und wenn die gleich ist,
+    // dann wird die Drohne an eine zufällige Position gesetzt
+    //TODO: komplette Wolkentextur muss iw erkannt werden, um dann mit der Drohne auch richtig zu kollidieren. Eventuell iw Objektgröße abfragen?
+    fun collisionDetectionCloud(drone:Renderable,cloud:Renderable){
+          //so passiert nix
+          if (drone.getPosition()==cloud.getPosition()){
+          //so macht der das immmer???
+ /*       if(drone.getXAxis()==cloud.getXAxis()){
+            if (drone.getYAxis()==cloud.getYAxis()){
+                if (drone.getZAxis()==cloud.getZAxis()){
 
-    fun update(dt: Float, t: Float) {
+                }
+            }*/
+            val randomPositionX = (1000..10000).random()
+            val randomPositiony = (1000..10000).random()
+            val randomPositionz = (1000..10000).random()
+
+            droneRend.translateLocal(Vector3f(randomPositionX.toFloat(),randomPositiony.toFloat(), randomPositionz.toFloat()))
+        }
+    }
+
+
+/*    fun update(dt: Float, t: Float) {
         //Farbe des Motorads wird verändert in Abhängigkeit der Zeit mit sinuswerten
         pointLight.lightColor = Vector3f(abs(sin(t)),abs(sin(t/2)),abs(sin(t/3)))
         //Bewegung des Motorrads
@@ -274,41 +295,47 @@ class Scene(private val window: GameWindow) {
                 cycleRend.rotateLocal(0.0f, -2f*dt, 0.0f)
             }
         }
-    }
+    }*/
 
-/*
     fun update(dt: Float, t: Float) {
         //TODO: FLughöhe der Drohne wie verändern?
         //Bewegung der Drohne
         //Drohne sinkt ab
         if (window.getKeyState(GLFW_KEY_LEFT_SHIFT)){
             droneRend.translateLocal(Vector3f(0.0f,-5000.0f*dt,0.0f))
+            collisionDetectionCloud(droneRend,cloudRend)
         }
         //Drohne steigt auf
         if (window.getKeyState(GLFW_KEY_SPACE)){
             droneRend.translateLocal(Vector3f(0.0f,5000.0f*dt,0.0f))
+            collisionDetectionCloud(droneRend,cloudRend)
         }
         if(window.getKeyState(GLFW_KEY_W)){
             //z-Wert muss je nach drone-Größe angepasst werden
             droneRend.translateLocal(Vector3f(0.0f, 0.0f, -5000*dt))
+            collisionDetectionCloud(droneRend,cloudRend)
             if(window.getKeyState(GLFW_KEY_A)){
                 droneRend.rotateLocal(0.0f, 2f*dt, 0.0f)
+                collisionDetectionCloud(droneRend,cloudRend)
             }
             if(window.getKeyState(GLFW_KEY_D)){
                 droneRend.rotateLocal(0.0f, -2f*dt, 0.0f)
+                collisionDetectionCloud(droneRend,cloudRend)
             }
         }
         if(window.getKeyState(GLFW_KEY_S)){
             droneRend.translateLocal(Vector3f(0.0f, 0.0f, 5000*dt))
+            collisionDetectionCloud(droneRend,cloudRend)
             if(window.getKeyState(GLFW_KEY_A)){
                 droneRend.rotateLocal(0.0f, 2f*dt, 0.0f)
+                collisionDetectionCloud(droneRend,cloudRend)
             }
             if(window.getKeyState(GLFW_KEY_D)){
                 droneRend.rotateLocal(0.0f, -2f*dt, 0.0f)
+                collisionDetectionCloud(droneRend,cloudRend)
             }
         }
     }
-*/
 
     fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {}
 
