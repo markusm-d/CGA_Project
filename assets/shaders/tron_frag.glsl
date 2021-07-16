@@ -8,8 +8,11 @@ in struct VertexData
     vec3 normale;
     vec3 toPointLight;
     vec3 toFrontSpotLight;
+    //TODO: Warum stürzt Programm ab, wenn ich den Struct erweitere?
+    //vec3 toDroneSpotLight;
 
 } vertexData;
+
 
 //Material
 uniform sampler2D diff;
@@ -24,6 +27,11 @@ uniform vec3 bykleSpotLightColor;
 uniform vec3 bykleSpotLightAttributeParameter;
 uniform vec2 bykleSpotLightAngle;
 uniform vec3 bykleSpotLightDirection;
+
+uniform vec3 droneSpotLightColor;
+uniform vec3 droneSpotLightAttributeParameter;
+uniform vec2 droneSpotLightAngle;
+uniform vec3 droneSpotLightDirection;
 
 uniform vec3 colorChange;
 
@@ -72,6 +80,9 @@ void main(){
     vec3 pointLightPosition = vertexData.toPointLight/pointLightPositionLength;
     float frontSpotLightPositionLength = length(vertexData.toFrontSpotLight);
     vec3 frontSpotLightPosition = vertexData.toFrontSpotLight/frontSpotLightPositionLength;
+/*    float droneSpotLightPositionLength = length(vertexData.toDroneSpotLight);
+    vec3 droneSpotLightPosition = vertexData.toDroneSpotLight/droneSpotLightPositionLength;*/
+
 
     //Texturverarbeitung
     vec3 diffCol = texture(diff, vertexData.texture).rgb;
@@ -84,6 +95,7 @@ void main(){
     //Colorberechnungen
     colorResult += shading(normale, pointLightPosition, position, diffCol, specularCol, shininess) * pointLightIntensity(byklePointLightColor, pointLightPositionLength);
     colorResult += shading(normale, frontSpotLightPosition, position, diffCol, specularCol, shininess) * spotLightIntensity(bykleSpotLightColor, frontSpotLightPositionLength, frontSpotLightPosition, bykleSpotLightDirection);
+    //colorResult += shading(normale, droneSpotLightPosition, position, diffCol, specularCol, shininess) * spotLightIntensity(droneSpotLightColor, droneSpotLightPositionLength, droneSpotLightPosition, droneSpotLightDirection);
     //finale Color
     color = vec4(colorResult, 1.0);
 }

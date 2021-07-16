@@ -26,7 +26,7 @@ import kotlin.math.sin
  */
 class Scene(private val window: GameWindow) {
     private val staticShader: ShaderProgram
-    //Shader für Drohne und Wolken. Leider funktioniert noch nicht allesso wie es sollte...
+    //Shader für Drohne und Wolken. Leider funktioniert noch nicht alles so wie es sollte...
     private val droneShader:ShaderProgram
     private val cloudShader:ShaderProgram //TODO: Shader muss noch angepasst werde. Eventuell wegen der ViewMatrix o.ä. schauen?
     //Testshader -> Wolke zu anders?
@@ -67,7 +67,7 @@ class Scene(private val window: GameWindow) {
     //Lights anlegen
     private var pointLight = PointLight(Vector3f(), Vector3f())
     private var frontSpotLight = Spotlight(Vector3f(), Vector3f())
-    private var droneSpot = Spotlight(Vector3f(), Vector3f())
+    private var droneSpotLight = Spotlight(Vector3f(), Vector3f())
 
     private var oldMousePosX : Double = -1.0
     private var oldMousePosY : Double = -1.0
@@ -161,8 +161,7 @@ class Scene(private val window: GameWindow) {
         //Rotate funktioniert nicht wirklich? Drohne gedreht, aber auch Kamera und Bewegung verändert...
         //droneRend.rotateAroundPoint(0.0f,Math.toRadians(90.0f),0.0f,droneRend.getWorldPosition())
 
-        //TODO: eventuell einen großen Vertex-Shader????
-        //TODO: Cloud ist definitv iw da. Größe muss jetzt noch angepasst werden. bzw. Shaderverarbeitung anpassen?
+        //TODO: Cloud ist definitv iw da
         cloudRend.scaleLocal(Vector3f(0.0025f))
         cloudRend.translateLocal(Vector3f(0.0f,50.0f,-1.0f))
 
@@ -185,9 +184,9 @@ class Scene(private val window: GameWindow) {
         frontSpotLight.rotateLocal(Math.toRadians(-10.0f), Math.PI.toFloat(), 0.0f)
         frontSpotLight.parent = cycleRend
 
-        droneSpot=Spotlight(Vector3f(0.0f, 0.0f, -2.0f), Vector3f(1.0f))
-        droneSpot.rotateLocal(Math.toRadians(-10.0f), Math.PI.toFloat(), 0.0f)
-        droneSpot.parent = droneRend
+        droneSpotLight=Spotlight(Vector3f(0.0f, 0.0f, -2.0f), Vector3f(1.0f))
+        droneSpotLight.rotateLocal(Math.toRadians(-10.0f), Math.PI.toFloat(), 0.0f)
+        droneSpotLight.parent = droneRend
 
 
     }
@@ -195,11 +194,7 @@ class Scene(private val window: GameWindow) {
 
     fun render(dt: Float, t: Float) {
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
-        //TODO: Problem wegen unterschiedlicher Shader lösen!
-/*        droneShader.use()
-        droneShader.setUniform("colorChange", Vector3f(1.0f))
-        droneRend.render(droneShader)*/
-
+        //TODO: Problem wegen unterschiedlicher Shader lösen! Eventuell durch Licht?
         //shader Benutzung definieren
         staticShader.use()
         //Kamera binden
@@ -208,6 +203,8 @@ class Scene(private val window: GameWindow) {
          //Eventuell anderer Shader nötig. Wird dargestellt, aber nicht korrekt :D
         staticShader.setUniform("colorChange", Vector3f(1.0f))
         droneRend.render(staticShader)
+        //TODO: Ich kann kein weiteres Licht in den Sahdern hinzufügen????
+        droneSpotLight.bind(staticShader,"droneSpot",tronCamera.getCalculateViewMatrix())
         staticShader.setUniform("colorChange", Vector3f(abs(sin(t)),abs(sin(t/2)),abs(sin(t/3))))
         cycleRend.render(staticShader)
         pointLight.bind(staticShader, "byklePoint")
@@ -218,6 +215,10 @@ class Scene(private val window: GameWindow) {
         staticShader.setUniform("colorChange", Vector3f(1.0f,0.0f,0.0f))
         cloudRend.render(staticShader)
 
+/*        droneShader.use()
+        droneShader.setUniform("colorChange", Vector3f(1.0f))
+        //droneSpot.bind(droneShader,"droneSpot",tronCamera.getCalculateViewMatrix())
+        droneRend.render(droneShader)*/
         //TODO: Ja, da ist jetzt was, aber richtig sieht es nicht aus :D bzw. gerade sieht man nichts...
         // nur was mit dem staticShader gerendert wird ist sichtbar???
         //eventuell was mit dem Licht zu tun?

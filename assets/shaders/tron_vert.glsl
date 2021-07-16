@@ -15,6 +15,7 @@ uniform vec2 tcMultiplier;
 //Lichtpositionen
 uniform vec3 byklePointLightPosition;
 uniform vec3 bykleSpotLightPosition;
+uniform vec3 droneSpotLightPosition;
 
 
 
@@ -25,10 +26,12 @@ out struct VertexData
     vec3 normale;
     vec3 toPointLight;
     vec3 toFrontSpotLight;
-
+    //TODO: Warum stürzt Programm ab, wenn ich den Struct erweitere?
+    // Fehlermeldung:  Program linking failed:
+    //The  shader uses varying vertexData;toDroneSpotLight, but previous shader does not write to it.
+    //Out of resource error.
+    //vec3 toDroneSpotLight;
 } vertexData;
-
-
 
 void main(){
     mat4 modelView = view_matrix * model_matrix;
@@ -43,6 +46,9 @@ void main(){
 
     vec4 lp2 = view_matrix * vec4(bykleSpotLightPosition, 1.0);
     vertexData.toFrontSpotLight = (lp2 - pos).xyz;
+
+   /* vec4 lp3 = view_matrix * vec4(droneSpotLightPosition,1.0);
+    vertexData.toDroneSpotLight = (lp3 - pos).xyz;*/
 
     gl_Position = proj_matrix * pos;
     vertexData.position = -pos.xyz;

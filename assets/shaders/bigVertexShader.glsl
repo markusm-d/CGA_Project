@@ -16,7 +16,7 @@ uniform vec2 tcMultiplier;
 uniform vec3 byklePointLightPosition;
 uniform vec3 bykleSpotLightPosition;
 
-//uniform vec3 droneSpotLightPosition;
+uniform vec3 droneSpotLightPosition;
 
 out struct VertexData
 {
