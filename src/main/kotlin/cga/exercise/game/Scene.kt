@@ -165,7 +165,7 @@ class Scene(private val window: GameWindow) {
         cloudRend.scaleLocal(Vector3f(0.0025f))
         cloudRend.translateLocal(Vector3f(0.0f,50.0f,-1.0f))
 
-        tronCamera.parent = cycleRend
+        tronCamera.parent = cloudRend
 
         //Kameratransformationen
         tronCamera.rotateLocal(Math.toRadians(-35.0f), 0.0f, 0.0f)
@@ -204,7 +204,7 @@ class Scene(private val window: GameWindow) {
         staticShader.setUniform("colorChange", Vector3f(1.0f))
         droneRend.render(staticShader)
         //TODO: Ich kann kein weiteres Licht in den Sahdern hinzufügen????
-        droneSpotLight.bind(staticShader,"droneSpot",tronCamera.getCalculateViewMatrix())
+        //droneSpotLight.bind(staticShader,"droneSpot",tronCamera.getCalculateViewMatrix())
         staticShader.setUniform("colorChange", Vector3f(abs(sin(t)),abs(sin(t/2)),abs(sin(t/3))))
         cycleRend.render(staticShader)
         pointLight.bind(staticShader, "byklePoint")
@@ -221,10 +221,11 @@ class Scene(private val window: GameWindow) {
         droneRend.render(droneShader)*/
         //TODO: Ja, da ist jetzt was, aber richtig sieht es nicht aus :D bzw. gerade sieht man nichts...
         // nur was mit dem staticShader gerendert wird ist sichtbar???
-        //eventuell was mit dem Licht zu tun?
-/*        cloudShader.use()
+/*        //eventuell was mit dem Licht zu tun?
+        cloudShader.use()
         cloudShader.setUniform("colorChange", Vector3f(1.0f))
-        cloudRend.render(cloudShader)*/
+        cloudRend.render(cloudShader)
+        droneSpotLight.bind(cloudShader,"cloudSpot",tronCamera.getCalculateViewMatrix())*/
 
 /*        //TODO: Ja, ein großer VertexShader funktioniert auch nicht besser, Wolke kann den eh nicht nutzen!?!
         bigDroneShader.use()

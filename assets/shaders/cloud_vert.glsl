@@ -24,11 +24,13 @@ uniform mat4 model_matrix;
 uniform mat4 view_matrix;
 uniform mat4 proj_matrix;
 
+uniform vec3 cloudSpotLightPosition;
 
 out struct VertexData
 {
     vec3 position;
     vec3 normale;
+    //vec3 light;
 } vertexData;
 //out vec3 col;
 
@@ -38,6 +40,8 @@ void main(){
     vec4 pos =  modelView * vec4(position, 1.0f);
     vec4 nor = inverse(transpose(modelView)) * vec4(normale, 0.0f);
 
+/*    vec4 lp=view_matrix*vec4(position,1.0f);
+    vertexData.light=(lp-pos).xyz;*/
 
     gl_Position=proj_matrix*pos;
     vertexData.position=-pos.xyz;
