@@ -75,15 +75,16 @@ class Scene(private val window: GameWindow) {
 
     //scene setup
     init {
+        //Versucht ob es eventuell an den ID´s der Shader liegt. Leider nicht
         //staticShader = ShaderProgram("assets/shaders/simple_vert.glsl", "assets/shaders/simple_frag.glsl")
-        staticShader = ShaderProgram("assets/shaders/tron_vert.glsl", "assets/shaders/tron_frag.glsl")
-        droneShader= ShaderProgram("assets/shaders/drone_vert.glsl","assets/shaders/drone_frag.glsl")
+        staticShader = ShaderProgram("assets/shaders/tron_vert.glsl", "assets/shaders/tron_frag.glsl",0)
+        droneShader= ShaderProgram("assets/shaders/drone_vert.glsl","assets/shaders/drone_frag.glsl",1)
         //Versuch Drohnen-Shader mit Tron shader zu verbinden. Trotzdem keine Drohne...
-        //droneShader= ShaderProgram("assets/shaders/tron_vert.glsl","assets/shaders/drone_frag.glsl")
-        cloudShader= ShaderProgram("assets/shaders/cloud_vert.glsl","assets/shaders/cloud_frag.glsl")
+        //droneShader= ShaderProgram("assets/shaders/drone_vert.glsl","assets/shaders/drone_frag.glsl",1)
+        cloudShader= ShaderProgram("assets/shaders/cloud_vert.glsl","assets/shaders/cloud_frag.glsl",2)
 
-        bigStaticShader= ShaderProgram("assets/shaders/bigVertexShader.glsl", "assets/shaders/tron_frag.glsl")
-        bigDroneShader=ShaderProgram("assets/shaders/bigVertexShader.glsl","assets/shaders/drone_frag.glsl")
+        bigStaticShader= ShaderProgram("assets/shaders/bigVertexShader.glsl", "assets/shaders/tron_frag.glsl",3)
+        bigDroneShader=ShaderProgram("assets/shaders/bigVertexShader.glsl","assets/shaders/drone_frag.glsl",4)
         //bigCloudShader= ShaderProgram("assets/shaders/tron_frag.glsl","assets/shaders/cloud_frag.glsl")
 
         //initial opengl state
@@ -195,14 +196,26 @@ class Scene(private val window: GameWindow) {
     fun render(dt: Float, t: Float) {
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
         //TODO: Problem wegen unterschiedlicher Shader lösen! Eventuell durch Licht?
+        droneShader.use()
+        tronCamera.bind(droneShader)
+
+        droneShader.setUniform("colorChange", Vector3f(0.0f,0.0f,1.0f))
+        droneSpotLight.bind(droneShader,"bykleSpot",tronCamera.getCalculateViewMatrix())
+        droneRend.render(droneShader)
+
+/*        bigDroneShader.use()
+        tronCamera.bind(bigDroneShader)
+        bigDroneShader.setUniform("colorChange", Vector3f(0.0f,0.0f,1.0f))
+        droneRend.render(bigDroneShader)*/
+        //groundRend.render(droneShader)
         //shader Benutzung definieren
-        staticShader.use()
+ /*       staticShader.use()
         //Kamera binden
         tronCamera.bind(staticShader)
         //mesh rendern
          //Eventuell anderer Shader nötig. Wird dargestellt, aber nicht korrekt :D
         staticShader.setUniform("colorChange", Vector3f(1.0f))
-        droneRend.render(staticShader)
+        //droneRend.render(staticShader)
         //TODO: Ich kann kein weiteres Licht in den Sahdern hinzufügen????
         //droneSpotLight.bind(staticShader,"droneSpot",tronCamera.getCalculateViewMatrix())
         staticShader.setUniform("colorChange", Vector3f(abs(sin(t)),abs(sin(t/2)),abs(sin(t/3))))
@@ -213,19 +226,16 @@ class Scene(private val window: GameWindow) {
         groundRend.render(staticShader)
         //So kann man tatsächlich auch die Wolke sehen :D
         staticShader.setUniform("colorChange", Vector3f(1.0f,0.0f,0.0f))
-        cloudRend.render(staticShader)
+        cloudRend.render(staticShader)*/
 
-/*        droneShader.use()
-        droneShader.setUniform("colorChange", Vector3f(1.0f))
-        //droneSpot.bind(droneShader,"droneSpot",tronCamera.getCalculateViewMatrix())
-        droneRend.render(droneShader)*/
+
         //TODO: Ja, da ist jetzt was, aber richtig sieht es nicht aus :D bzw. gerade sieht man nichts...
-        // nur was mit dem staticShader gerendert wird ist sichtbar???
-/*        //eventuell was mit dem Licht zu tun?
+        // nur was mit dem staticShader gerendert wird ist sichtbar, bzw. immer nur einer und static überlagert immer alles...
+        //eventuell was mit dem Licht zu tun?
         cloudShader.use()
+        tronCamera.bind(cloudShader)
         cloudShader.setUniform("colorChange", Vector3f(1.0f))
         cloudRend.render(cloudShader)
-        droneSpotLight.bind(cloudShader,"cloudSpot",tronCamera.getCalculateViewMatrix())*/
 
 /*        //TODO: Ja, ein großer VertexShader funktioniert auch nicht besser, Wolke kann den eh nicht nutzen!?!
         bigDroneShader.use()

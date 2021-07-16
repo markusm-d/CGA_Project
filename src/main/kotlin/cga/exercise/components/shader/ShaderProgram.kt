@@ -15,8 +15,8 @@ import java.nio.file.Paths
 /**
  * Created by Fabian on 16.09.2017.
  */
-class ShaderProgram(vertexShaderPath: String, fragmentShaderPath: String) {
-    private var programID: Int = 0
+class ShaderProgram(vertexShaderPath: String, fragmentShaderPath: String, programmID:Int) {
+    private var programID: Int = programmID
     //Matrix buffers for setting matrix uniforms. Prevents allocation for each uniform
     private val m4x4buf: FloatBuffer = BufferUtils.createFloatBuffer(16)
     /**
