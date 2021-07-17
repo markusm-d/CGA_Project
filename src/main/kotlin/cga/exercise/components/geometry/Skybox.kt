@@ -6,12 +6,11 @@ import org.lwjgl.opengl.*
 import org.lwjgl.opengl.ARBVertexArrayObject.glBindVertexArray
 import org.lwjgl.opengl.ARBVertexArrayObject.glGenVertexArrays
 import org.lwjgl.opengl.GL15.*
-import org.lwjgl.opengl.GL20.glEnableVertexAttribArray
-import org.lwjgl.opengl.GL20.glVertexAttribPointer
 
 import cga.exercise.components.geometry.Transformable
 import cga.exercise.components.camera.*
 import org.lwjgl.BufferUtils
+import org.lwjgl.opengl.GL20.*
 import org.lwjgl.stb.STBImage
 
 class Skybox {
@@ -55,14 +54,14 @@ class Skybox {
 
     init {
         glBindVertexArray(skyboxVAO)
-        glGenBuffers(skyboxVBO)
-        glGenBuffers(skyboxEBO)
+        var skyboxVBO = glGenBuffers()
+        var skyboxIBO = glGenBuffers()
         glBindVertexArray(skyboxVAO)
         glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO)
         glBufferData(GL_ARRAY_BUFFER, skyboxVertecies, GL_STATIC_DRAW)
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, skyboxEBO)
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, skyboxIndices, GL_STATIC_DRAW)
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * skyboxVertecies, (null), 0)
+        //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * skyboxVertecies, (null), 0)
         glEnableVertexAttribArray(0)
         glBindBuffer(GL_ARRAY_BUFFER, 0)
         glBindVertexArray(0)
@@ -95,7 +94,7 @@ class Skybox {
 
 
         for (i in facesCubemap.indices) {
-            var data = STBImage.stbi_load(facesCubemap[i], width, height, nrChannels, 0)
+            val data = STBImage.stbi_load(facesCubemap[i], width, height, nrChannels, 0)
             if (data){
                 STBImage.stbi_set_flip_vertically_on_load(false)
                 GL11.glTexImage2D(
@@ -114,6 +113,18 @@ class Skybox {
                 println("Failed to load texture: ")
             }
         }
+
+
+
+        glBindVertexArray(skyboxVAO)
+        glActiveTexture(GL_TEXTURE0)
+        glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture)
+        glDrawArrays(GL_TRIANGLES, 0, 36)
+        glBindVertexArray(0)
+
+
     }
+
+
 
 }

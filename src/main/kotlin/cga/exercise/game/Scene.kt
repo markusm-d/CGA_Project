@@ -131,6 +131,8 @@ class Scene(private val window: GameWindow) {
 
         skyboxShader.use()
         skyboxShader.setUniform("skybox", 0 )
+
+
     }
 
 
