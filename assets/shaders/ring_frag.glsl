@@ -8,11 +8,10 @@ in struct VertexData
     vec3 normale;
 } vertexData;
 
-uniform sampler2D albedo;
-uniform sampler2D emission;
-uniform sampler2D metallic;
-uniform sampler2D normal;
-uniform sampler2D occlusion;
+uniform sampler2D col;
+uniform sampler2D disp;
+uniform sampler2D metalness;
+uniform sampler2D nrm;
 uniform sampler2D roughness;
 uniform float shininess;
 
@@ -29,15 +28,13 @@ void main(){
     vec3 position = normalize(vertexData.position);
 
     //Texturverarbeitung
-    vec3 albedoCol = texture(albedo, vertexData.texture).rgb;
-    vec3 emissionCol = texture(emission, vertexData.texture).rgb;
-    vec3 metallicCol = texture(metallic, vertexData.texture).rgb;
-    vec3 normalCol = texture(normal, vertexData.texture).rgb;
-    vec3 occlusionCol = texture(occlusion, vertexData.texture).rgb;
+    vec3 colCol = texture(col, vertexData.texture).rgb;
+    vec3 dispCol = texture(disp, vertexData.texture).rgb;
+    vec3 metalnessCol = texture(metalness, vertexData.texture).rgb;
     vec3 rougnessCol = texture(roughness, vertexData.texture).rgb;
 
     //Versuch drone sichtbar zu machen
-    vec3 colorResult=metallicCol*colorChange;
+    vec3 colorResult=metalnessCol*colorChange;
 
 
 

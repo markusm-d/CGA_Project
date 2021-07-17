@@ -5,8 +5,6 @@ import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.texture.Texture2D
 import org.joml.Vector2f
 
-//Versuch das Material für die Drohne erstellen zu können. geht theoretisch, allerding müsste auch ein neues Mesh erstellt werden, denke ich...
-// da das bestehende kein droneMaterial übernehmen kann. Oder nur einen ANteil der PNG´s nutzen? Aber ich wüsste jetzt nicht genau wie...
 class droneMaterial (var albedo: Texture2D,
                      var emission: Texture2D,
                      var metallic: Texture2D,

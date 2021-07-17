@@ -53,7 +53,7 @@ class ShaderProgram(vertexShaderPath: String, fragmentShaderPath: String, progra
         }
         return false
     }
-    //TODO: eventuell iw ein setUnifrom für drone?
+
     fun setUniform(name: String, value: Vector2f): Boolean {
         if (programID == 0) return false
         val loc = GL20.glGetUniformLocation(programID, name)
