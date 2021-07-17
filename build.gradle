@@ -53,10 +53,13 @@ dependencies {
 }
 
 compileKotlin {
-    kotlinOptions.jvmTarget = "11"
+    kotlinOptions.jvmTarget = "15"
+    kotlinOptions {
+        languageVersion = "1.4"
+    }
 }
 compileTestKotlin {
-    kotlinOptions.jvmTarget = "11"
+    kotlinOptions.jvmTarget = "15"
 }
 
 task(fatJar, type: Jar) {

@@ -19,6 +19,8 @@ import kotlin.math.abs
 import org.joml.Math
 import org.joml.Vector2f
 import org.lwjgl.glfw.GLFW.*
+import org.lwjgl.opengl.GL20.glGetUniformLocation
+import org.lwjgl.opengl.GL20.glUniform1i
 import kotlin.math.sin
 
 
@@ -26,7 +28,8 @@ import kotlin.math.sin
  * Created by Fabian on 16.09.2017.
  */
 class Scene(private val window: GameWindow) {
-    private val staticShader: ShaderProgram
+    private var staticShader: ShaderProgram
+    private var skyboxShader: ShaderProgram
 
     //ObjectLoader
      //Object laden
@@ -51,6 +54,7 @@ class Scene(private val window: GameWindow) {
     init {
         //staticShader = ShaderProgram("assets/shaders/simple_vert.glsl", "assets/shaders/simple_frag.glsl")
         staticShader = ShaderProgram("assets/shaders/tron_vert.glsl", "assets/shaders/tron_frag.glsl")
+        skyboxShader = ShaderProgram("assets/shaders/skybox_ver.glsl", "assets/shaders/skybox_frag.glsl")
 
         //initial opengl state
         //glClearColor(0.6f, 1.0f, 1.0f, 1.0f); GLError.checkThrow()
@@ -124,6 +128,9 @@ class Scene(private val window: GameWindow) {
         frontSpotLight.bind(staticShader, "bykleSpot", tronCamera.getCalculateViewMatrix())
         staticShader.setUniform("colorChange", Vector3f(0.0f,1.0f,0.0f))
         groundRend.render(staticShader)
+
+        skyboxShader.use()
+        skyboxShader.setUniform("skybox", 0 )
     }
 
 

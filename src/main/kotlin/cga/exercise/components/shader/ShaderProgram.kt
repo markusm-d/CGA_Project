@@ -101,6 +101,7 @@ class ShaderProgram(vertexShaderPath: String, fragmentShaderPath: String) {
      * @param fragmentShaderPath    fragment shader path
      * @throws Exception if shader compilation failed, an exception is thrown
      */
+
     init {
         val vPath = Paths.get(vertexShaderPath)
         val fPath = Paths.get(fragmentShaderPath)
