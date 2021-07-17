@@ -6,7 +6,6 @@ in struct VertexData
     vec3 position;
     vec2 texture;
     vec3 normale;
-    //vec3 toSpotLight;
 } vertexData;
 
 uniform sampler2D albedo;
@@ -17,10 +16,6 @@ uniform sampler2D occlusion;
 uniform sampler2D roughness;
 uniform float shininess;
 
-/*uniform vec3 droneSpotLightColor;
-uniform vec3 droneSpotLightAttributeParameter;
-uniform vec2 droneSpotLightAngle;
-uniform vec3 droneSpotLightDirection;*/
 
 uniform vec3 colorChange;
 
@@ -64,10 +59,6 @@ void main(){
     vec3 normale = normalize(vertexData.normale);
     vec3 position = normalize(vertexData.position);
 
-/*    //Lichtversuch...
-    float droneSpotLightPositionLength=length(vertexData.toSpotLight);
-    vec3 droneSpotLightPosition=vertexData.toSpotLight/droneSpotLightPositionLength;*/
-
     //Texturverarbeitung
     vec3 albedoCol = texture(albedo, vertexData.texture).rgb;
     vec3 emissionCol = texture(emission, vertexData.texture).rgb;
@@ -79,7 +70,6 @@ void main(){
     //Versuch drone sichtbar zu machen
     vec3 colorResult=metallicCol*colorChange;
 
-    //colorResult+=shading(normale,droneSpotLightPosition,position,albedoCol,emissionCol,shininess)*spotLightIntensity(droneSpotLightColor,droneSpotLightPositionLength,droneSpotLightPosition,droneSpotLightDirection);
 
 
     color = vec4(colorResult,1.0);
