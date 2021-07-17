@@ -231,11 +231,24 @@ class Scene(private val window: GameWindow) {
     }
 
     //Kollision für Ringe-->sollen dann gelöscht werden
-    fun collisionDetectionRing(rone:Renderable,ring:Renderable){
+    fun collisionDetectionRing(drone:Renderable,ring:Renderable){
         //Positionsabfrage und Vergleich
 
         //Löschen des Ringes
 
+    }
+
+    fun cloudMovement(cloud: Renderable/*, stop:Float*/){
+        //SO dreht sich die Wolke zumindest schonmal auf der Stelle ;)
+        cloud.rotateAroundPoint(Math.toRadians(1.0f),0.0f,0.0f,cloud.getPosition())
+/*        val tranform=cloud.getPosition()
+        val increment=1.0f
+        //Bewegung lässt sich nicht stoppen :D
+        if (tranform.x<stop) {
+            cloud.translateLocal(Vector3f(tranform.x + increment, tranform.y, tranform.z))
+        }else{
+            cloud.translateLocal(Vector3f(tranform.x - 10.0f, tranform.y, tranform.z))
+        }*/
     }
 
 /*    fun update(dt: Float, t: Float) {
@@ -263,6 +276,7 @@ class Scene(private val window: GameWindow) {
     }*/
 
     fun update(dt: Float, t: Float) {
+        cloudMovement(cloudRend)
         //Bewegung der Drohne
         //Drohne sinkt ab
         if (window.getKeyState(GLFW_KEY_LEFT_SHIFT)){
