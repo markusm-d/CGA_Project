@@ -93,8 +93,9 @@ void main(){
     vec3 colorResult = emitCol*colorChange;
 
     //Colorberechnungen
-    colorResult += shading(normale, pointLightPosition, position, diffCol, specularCol, shininess) * pointLightIntensity(byklePointLightColor, pointLightPositionLength);
-    colorResult += shading(normale, frontSpotLightPosition, position, diffCol, specularCol, shininess) * spotLightIntensity(bykleSpotLightColor, frontSpotLightPositionLength, frontSpotLightPosition, bykleSpotLightDirection);
+    //Nur einbeziehen, wenn man die Lichter auch rendert, sonst alles dunkel
+    //colorResult += shading(normale, pointLightPosition, position, diffCol, specularCol, shininess) * pointLightIntensity(byklePointLightColor, pointLightPositionLength);
+    //colorResult += shading(normale, frontSpotLightPosition, position, diffCol, specularCol, shininess) * spotLightIntensity(bykleSpotLightColor, frontSpotLightPositionLength, frontSpotLightPosition, bykleSpotLightDirection);
     //colorResult += shading(normale, droneSpotLightPosition, position, diffCol, specularCol, shininess) * spotLightIntensity(droneSpotLightColor, droneSpotLightPositionLength, droneSpotLightPosition, droneSpotLightDirection);
     //finale Color
     color = vec4(colorResult, 1.0);

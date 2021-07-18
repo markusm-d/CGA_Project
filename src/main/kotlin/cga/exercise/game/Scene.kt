@@ -66,6 +66,11 @@ class Scene(private val window: GameWindow) {
     private var oldMousePosY : Double = -1.0
     private var pruefBoolean : Boolean = false
 
+    //Variablen für Cloud-Bewegungsversuch
+    private var stop=1.0f
+    private var moveDiraction=1.0f
+
+
     //scene setup
     init {
         staticShader = ShaderProgram("assets/shaders/tron_vert.glsl", "assets/shaders/tron_frag.glsl",0)
@@ -218,23 +223,24 @@ class Scene(private val window: GameWindow) {
         return Math.sqrt((xDistance*xDistance).toDouble()+
                 (yDistance*yDistance).toDouble()+(zDistance*zDistance).toDouble()).toFloat()
     }
-    //Theorie: Position von zwei Objekten abfragen und wenn die gleich ist,
-    // dann wird die Drohne an eine zufällige Position gesetzt
-    //TODO: komplette Wolkentextur muss iw erkannt werden, um dann mit der Drohne auch richtig zu kollidieren. Eventuell iw Objektgröße abfragen?
+
+    //Kollision mit Wolke
     fun collisionDetectionCloud(drone:Renderable,cloud:Renderable){
-        //Distanzen bestimmen
+        //Distanzen prüfen
         if (collisionCheck(drone,cloud)<=0.1){
+            //wenn getroffen, Drohne neue Position
             drone.translateLocal(randomPosition())
         }
     }
 
-    //Kollision für Ringe-->sollen dann gelöscht werden
+    //Kollision für Ringe
     fun collisionDetectionRing(drone:Renderable,ring:Renderable){
-        //Distanze
+        //Distanze prüfen
         //müssen jetzt noch sehr mittig durchflogen werden zur Erkennung.
         // Aber es funktioniert ;)
         if (collisionCheck(drone,ring)<=0.2){
-            //zwar nicht gelöscht, aber so klein, das nicht merh zu sehen :)
+            //zwar nicht gelöscht, aber so klein, das nicht mehr zu sehen :)
+                //oder man macht ein unendliches Spiel und setzt einfach eine neue Ring-Position?
             ring.scaleLocal(Vector3f(0.00005f))
         }
     }
@@ -247,45 +253,39 @@ class Scene(private val window: GameWindow) {
         collisionDetectionRing(droneRend,ring2Rend)
     }
 
-    fun cloudMovement(cloud: Renderable/*, stop:Float*/){
-        //SO dreht sich die Wolke zumindest schonmal auf der Stelle ;)
-        cloud.rotateAroundPoint(Math.toRadians(1.0f),0.0f,0.0f,cloud.getPosition())
+    fun cloudMoveLeftRight(cloud: Renderable){
 /*        val tranform=cloud.getPosition()
         val increment=1.0f
-        //Bewegung lässt sich nicht stoppen :D
-        if (tranform.x<stop) {
+        //Bewegung lässt sich nicht stoppen :D if-Abfrage noch nicht gut...
+        if (stop==1.0f) {
             cloud.translateLocal(Vector3f(tranform.x + increment, tranform.y, tranform.z))
+            stop=2.0f
         }else{
-            cloud.translateLocal(Vector3f(tranform.x - 10.0f, tranform.y, tranform.z))
+            cloud.translateLocal(Vector3f(tranform.x - increment, tranform.y, tranform.z))
+            stop=1.0f
         }*/
+            if (moveDiraction==1.0f){
+                cloud.translateLocal(Vector3f(cloud.getPosition().x+1.0f,cloud.getPosition().y,cloud.getPosition().z))
+                moveDiraction=5.0f
+            }else{
+                cloud.translateLocal(Vector3f(cloud.getPosition().x-1.0f,cloud.getPosition().y,cloud.getPosition().z))
+                moveDiraction=1.0f
+            }
+
+    }
+    fun cloudMoveRotate(cloud: Renderable, rotation:Vector3f){
+        //So dreht sich die Wolke zumindest schonmal auf der Stelle ;)
+        cloud.rotateAroundPoint(rotation.x,rotation.y,rotation.z,cloud.getPosition())
     }
 
-/*    fun update(dt: Float, t: Float) {
-        //Farbe des Motorads wird verändert in Abhängigkeit der Zeit mit sinuswerten
-        pointLight.lightColor = Vector3f(abs(sin(t)),abs(sin(t/2)),abs(sin(t/3)))
-        //Bewegung des Motorrads
-        if(window.getKeyState(GLFW_KEY_W)){
-            cycleRend.translateLocal(Vector3f(0.0f, 0.0f, -5*dt))
-            if(window.getKeyState(GLFW_KEY_A)){
-                cycleRend.rotateLocal(0.0f, 2f*dt, 0.0f)
-            }
-            if(window.getKeyState(GLFW_KEY_D)){
-                cycleRend.rotateLocal(0.0f, -2f*dt, 0.0f)
-            }
-        }
-        if(window.getKeyState(GLFW_KEY_S)){
-            cycleRend.translateLocal(Vector3f(0.0f, 0.0f, 5*dt))
-            if(window.getKeyState(GLFW_KEY_A)){
-                cycleRend.rotateLocal(0.0f, 2f*dt, 0.0f)
-            }
-            if(window.getKeyState(GLFW_KEY_D)){
-                cycleRend.rotateLocal(0.0f, -2f*dt, 0.0f)
-            }
-        }
-    }*/
+    fun cloudMovement(){
+        cloudMoveRotate(cloudRend,Vector3f(0.0f,Math.toRadians(1.0f),0.0f))
+        //cloudMoveLeftRight(cloudRend)
+    }
 
     fun update(dt: Float, t: Float) {
-        cloudMovement(cloudRend)
+        //Wolkenbewegung
+        cloudMovement()
         //Bewegung der Drohne
         //Drohne sinkt ab
         if (window.getKeyState(GLFW_KEY_LEFT_SHIFT)){
