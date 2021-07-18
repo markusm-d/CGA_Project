@@ -209,33 +209,42 @@ class Scene(private val window: GameWindow) {
         var randomPositionZ = (-10000..10000).random()
         return Vector3f(randomPositionX.toFloat(),randomPositionY.toFloat(),randomPositionZ.toFloat())
     }
+
+    fun collisionCheck(drone:Renderable, object2:Renderable): Float{
+        val xDistance=drone.getPosition().x-object2.getPosition().x
+        val yDistance=drone.getPosition().y-object2.getPosition().y
+        val zDistance=drone.getPosition().z-object2.getPosition().z
+
+        return Math.sqrt((xDistance*xDistance).toDouble()+
+                (yDistance*yDistance).toDouble()+(zDistance*zDistance).toDouble()).toFloat()
+    }
     //Theorie: Position von zwei Objekten abfragen und wenn die gleich ist,
     // dann wird die Drohne an eine zufällige Position gesetzt
     //TODO: komplette Wolkentextur muss iw erkannt werden, um dann mit der Drohne auch richtig zu kollidieren. Eventuell iw Objektgröße abfragen?
     fun collisionDetectionCloud(drone:Renderable,cloud:Renderable){
-          //so passiert nix
-          if (drone.getPosition()==cloud.getPosition()){
-          //so macht der das immmer???
- /*       if(drone.getXAxis()==cloud.getXAxis()){
-            if (drone.getYAxis()==cloud.getYAxis()){
-                if (drone.getZAxis()==cloud.getZAxis()){
-
-                }
-            }*/
-            val randomPositionX = (-10000..10000).random()
-            val randomPositiony = (-10000..10000).random()
-            val randomPositionz = (-10000..10000).random()
-            //Drohne wird bei Wolkenkollision an einen zufälligen PLatz gesetzt
-            droneRend.translateLocal(Vector3f(randomPositionX.toFloat(),randomPositiony.toFloat(), randomPositionz.toFloat()))
+        //Distanzen bestimmen
+        if (collisionCheck(drone,cloud)<=0.1){
+            drone.translateLocal(randomPosition())
         }
     }
 
     //Kollision für Ringe-->sollen dann gelöscht werden
     fun collisionDetectionRing(drone:Renderable,ring:Renderable){
-        //Positionsabfrage und Vergleich
+        //Distanze
+        //müssen jetzt noch sehr mittig durchflogen werden zur Erkennung.
+        // Aber es funktioniert ;)
+        if (collisionCheck(drone,ring)<=0.2){
+            //zwar nicht gelöscht, aber so klein, das nicht merh zu sehen :)
+            ring.scaleLocal(Vector3f(0.00005f))
+        }
+    }
 
-        //Löschen des Ringes
-
+    //Abfrage der einzelnen möglichen Kollisionen
+    fun collisionDetection(){
+        collisionDetectionCloud(droneRend,cloudRend)
+        collisionDetectionRing(droneRend,ringRend)
+        collisionDetectionRing(droneRend,ring1Rend)
+        collisionDetectionRing(droneRend,ring2Rend)
     }
 
     fun cloudMovement(cloud: Renderable/*, stop:Float*/){
@@ -281,29 +290,34 @@ class Scene(private val window: GameWindow) {
         //Drohne sinkt ab
         if (window.getKeyState(GLFW_KEY_LEFT_SHIFT)){
             droneRend.translateLocal(Vector3f(0.0f,-5000.0f*dt,0.0f))
-            collisionDetectionCloud(droneRend,cloudRend)
+            collisionDetection()
         }
         //Drohne steigt auf
         if (window.getKeyState(GLFW_KEY_SPACE)){
             droneRend.translateLocal(Vector3f(0.0f,5000.0f*dt,0.0f))
-            collisionDetectionCloud(droneRend,cloudRend)
+            collisionDetection()
+
         }
         if(window.getKeyState(GLFW_KEY_W)){
             //z-Wert muss je nach drone-Größe angepasst werden
             droneRend.translateLocal(Vector3f(0.0f, 0.0f, -5000*dt))
-            collisionDetectionCloud(droneRend,cloudRend)
+            collisionDetection()
+
         }
         if(window.getKeyState(GLFW_KEY_S)){
             droneRend.translateLocal(Vector3f(0.0f, 0.0f, 5000*dt))
-            collisionDetectionCloud(droneRend,cloudRend)
+            collisionDetection()
+
         }
         if(window.getKeyState(GLFW_KEY_A)){
             droneRend.rotateLocal(0.0f, 2f*dt, 0.0f)
-            collisionDetectionCloud(droneRend,cloudRend)
+            collisionDetection()
+
         }
         if(window.getKeyState(GLFW_KEY_D)){
             droneRend.rotateLocal(0.0f, -2f*dt, 0.0f)
-            collisionDetectionCloud(droneRend,cloudRend)
+            collisionDetection()
+
         }
     }
 
