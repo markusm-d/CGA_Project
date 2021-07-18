@@ -88,21 +88,23 @@ class Skybox {
         GL11.glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
         GL11.glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE)
 
-        var width: Int = 512
-        var height: Int = 512
-        var nrChannels: Int = 4
+
 
 
         for (i in facesCubemap.indices) {
-            val data = STBImage.stbi_load(facesCubemap[i], width, height, nrChannels, 0)
-            if (data){
+            //So sind es BufferObjekte
+            val width= BufferUtils.createIntBuffer(1)
+            val height=BufferUtils.createIntBuffer(1)
+            val nrChannels= BufferUtils.createIntBuffer(1)
+            val data = STBImage.stbi_load(facesCubemap[i], width, height, nrChannels, 4)
+            if (data!=null){
                 STBImage.stbi_set_flip_vertically_on_load(false)
                 GL11.glTexImage2D(
                     GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
                     0,
                     GL_RGB,
-                    width,
-                    height,
+                    width.get(),
+                    height.get(),
                     0,
                     GL_RGBA,
                     GL_UNSIGNED_BYTE,

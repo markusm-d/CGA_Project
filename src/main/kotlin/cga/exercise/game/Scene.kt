@@ -31,6 +31,9 @@ class Scene(private val window: GameWindow) {
     private var staticShader: ShaderProgram
     private var skyboxShader: ShaderProgram
 
+    //skybox-Objekt erstellen -> wie?
+    //private var skybox:Skybox
+
     //ObjectLoader
      //Object laden
     private val resGround : OBJLoader.OBJResult = OBJLoader.loadOBJ("assets/models/ground.obj")
@@ -54,7 +57,7 @@ class Scene(private val window: GameWindow) {
     init {
         //staticShader = ShaderProgram("assets/shaders/simple_vert.glsl", "assets/shaders/simple_frag.glsl")
         staticShader = ShaderProgram("assets/shaders/tron_vert.glsl", "assets/shaders/tron_frag.glsl")
-        skyboxShader = ShaderProgram("assets/shaders/skybox_ver.glsl", "assets/shaders/skybox_frag.glsl")
+        skyboxShader = ShaderProgram("assets/shaders/skybox_vert.glsl", "assets/shaders/skybox_frag.glsl")
 
         //initial opengl state
         //glClearColor(0.6f, 1.0f, 1.0f, 1.0f); GLError.checkThrow()
