@@ -32,7 +32,8 @@ class Scene(private val window: GameWindow) {
     private var skyboxShader: ShaderProgram
 
     //skybox-Objekt erstellen -> wie?
-    //private var skybox:Skybox
+    private var skybox: Skybox
+
 
     //ObjectLoader
      //Object laden
@@ -68,6 +69,48 @@ class Scene(private val window: GameWindow) {
         glCullFace(GL_BACK)
         glEnable(GL_DEPTH_TEST); GLError.checkThrow()
         glDepthFunc(GL_LESS); GLError.checkThrow()
+
+        //TODO: Skybox erstellen -> wie am besten?
+        skybox= Skybox()
+        val skyboxVertecies = floatArrayOf(
+
+            // Coordinates
+            -1.0f, -1.0f, 1.0f,
+            1.0f, -1.0f, 1.0f,
+            1.0f, -1.0f, -1.0f,
+            -1.0f, -1.0f, -1.0f,
+            -1.0f, 1.0f, 1.0f,
+            1.0f, 1.0f, 1.0f,
+            1.0f, 1.0f, -1.0f,
+            -1.0f, 1.0f, -1.0f
+        )
+        val skyboxIndices = intArrayOf(
+
+            // rechts
+            1, 2, 6,
+            6, 5, 1,
+            // links
+            0, 4, 7,
+            7, 3, 0,
+            // oben
+            4, 5, 6,
+            6, 7, 4,
+            // unten
+            0, 3, 2,
+            2, 1, 0,
+            // hinten
+            0, 1, 5
+        )
+
+        var facesCubemap: Array<String> = arrayOf(
+
+            "/assets/textures/skyrender0001.bmp",
+            "assets/textures/skyrender0002.bmp",
+            "assets/textures/skyrender_top.bmp",
+            "assets/textures/skyrender_bottom.bmp",
+            "assets/textures/skyrender0004.bmp",
+            "assets/textures/skyrender0005.bmp"
+        )
 
 
         //AttributeVertex definieren
@@ -134,8 +177,7 @@ class Scene(private val window: GameWindow) {
 
         skyboxShader.use()
         skyboxShader.setUniform("skybox", 0 )
-
-
+        skybox.create()
     }
 
 
