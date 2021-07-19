@@ -253,39 +253,34 @@ class Scene(private val window: GameWindow) {
         collisionDetectionRing(droneRend,ring2Rend)
     }
 
-    fun cloudMoveLeftRight(cloud: Renderable){
-/*        val tranform=cloud.getPosition()
-        val increment=1.0f
-        //Bewegung lässt sich nicht stoppen :D if-Abfrage noch nicht gut...
-        if (stop==1.0f) {
-            cloud.translateLocal(Vector3f(tranform.x + increment, tranform.y, tranform.z))
-            stop=2.0f
-        }else{
-            cloud.translateLocal(Vector3f(tranform.x - increment, tranform.y, tranform.z))
-            stop=1.0f
-        }*/
-            if (moveDiraction==1.0f){
-                cloud.translateLocal(Vector3f(cloud.getPosition().x+1.0f,cloud.getPosition().y,cloud.getPosition().z))
-                moveDiraction=5.0f
-            }else{
-                cloud.translateLocal(Vector3f(cloud.getPosition().x-1.0f,cloud.getPosition().y,cloud.getPosition().z))
-                moveDiraction=1.0f
-            }
-
+    fun cloudMoveLeft(cloud: Renderable){
+        cloud.translateLocal(Vector3f(cloud.getPosition().x-1.0f,cloud.getPosition().y,cloud.getPosition().z))
+    }
+    fun cloudMoveRight(cloud: Renderable){
+        cloud.translateLocal(Vector3f(cloud.getPosition().x+1.0f,cloud.getPosition().y,cloud.getPosition().z))
     }
     fun cloudMoveRotate(cloud: Renderable, rotation:Vector3f){
         //So dreht sich die Wolke zumindest schonmal auf der Stelle ;)
         cloud.rotateAroundPoint(rotation.x,rotation.y,rotation.z,cloud.getPosition())
     }
-
     fun cloudMovement(){
         cloudMoveRotate(cloudRend,Vector3f(0.0f,Math.toRadians(1.0f),0.0f))
-        //cloudMoveLeftRight(cloudRend)
+    }
+    fun cloudRandomMovement(cloud:Renderable){
+        var randomMove = (0..2).random()
+        if(randomMove==0){
+            cloudMoveRotate(cloud,Vector3f(0.0f,Math.toRadians(1.0f),0.0f))
+        }else if (randomMove==1){
+            cloudMoveLeft(cloud)
+        }else if (randomMove==2){
+            cloudMoveRight(cloud)
+        }
     }
 
     fun update(dt: Float, t: Float) {
         //Wolkenbewegung
-        cloudMovement()
+        //cloudMovement()
+        cloudRandomMovement(cloudRend)
         //Bewegung der Drohne
         //Drohne sinkt ab
         if (window.getKeyState(GLFW_KEY_LEFT_SHIFT)){
