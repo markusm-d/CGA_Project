@@ -70,7 +70,7 @@ class Skybox() {
 
 
 
-    var facesCubemap: Array<String> = arrayOf(
+/*    var facesCubemap: Array<String> = arrayOf(
 
         "/assets/textures/skyrender0001.bmp",
         "assets/textures/skyrender0002.bmp",
@@ -78,6 +78,13 @@ class Skybox() {
         "assets/textures/skyrender_bottom.bmp",
         "assets/textures/skyrender0004.bmp",
         "assets/textures/skyrender0005.bmp"
+    )*/
+
+    var facesCubemap: Array<String> = arrayOf(
+
+        "assets/textures/posx.jpg","assets/textures/negx.jpg",
+        "assets/textures/posy.jpg","assets/textures/negy.jpg",
+        "assets/textures/posz.jpg","assets/textures/negz.jpg"
     )
 
     //
