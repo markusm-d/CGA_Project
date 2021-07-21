@@ -140,10 +140,7 @@ class Scene(private val window: GameWindow) {
 
         ringRend.scaleLocal(Vector3f(0.00025f))
         ringRend.translateLocal(randomPosition())
-        ring1Rend.scaleLocal(Vector3f(0.00025f))
-        ring1Rend.translateLocal(randomPosition())
-        ring2Rend.scaleLocal(Vector3f(0.00025f))
-        ring2Rend.translateLocal(randomPosition())
+
 
         cloudRend.scaleLocal(Vector3f(0.0025f))
         cloudRend.translateLocal(Vector3f(500.0f,50.0f,-1.0f))
@@ -180,12 +177,8 @@ class Scene(private val window: GameWindow) {
 
         ringShader.use()
         tronCamera.bind(ringShader)
-        ringShader.setUniform("colorChange", Vector3f(0.0f,1.0f,1.0f))
-        ringRend.render(ringShader)
-        ringShader.setUniform("colorChange", Vector3f(1.0f,1.0f,1.0f))
-        ring1Rend.render(ringShader)
         ringShader.setUniform("colorChange", Vector3f(0.0f,1.0f,0.0f))
-        ring2Rend.render(ringShader)
+        ringRend.render(ringShader)
 
 /*        //shader Benutzung definieren
         staticShader.use()
@@ -241,16 +234,13 @@ class Scene(private val window: GameWindow) {
         if (collisionCheck(drone,ring)<=0.2){
             //zwar nicht gelöscht, aber so klein, das nicht mehr zu sehen :)
                 //oder man macht ein unendliches Spiel und setzt einfach eine neue Ring-Position?
-            ring.scaleLocal(Vector3f(0.00005f))
+            ring.translateLocal(randomPosition())
         }
     }
 
     //Abfrage der einzelnen möglichen Kollisionen
     fun collisionDetection(){
         collisionDetectionCloud(droneRend,cloudRend)
-        collisionDetectionRing(droneRend,ringRend)
-        collisionDetectionRing(droneRend,ring1Rend)
-        collisionDetectionRing(droneRend,ring2Rend)
     }
 
     fun cloudMoveLeft(cloud: Renderable){
@@ -263,9 +253,7 @@ class Scene(private val window: GameWindow) {
         //So dreht sich die Wolke zumindest schonmal auf der Stelle ;)
         cloud.rotateAroundPoint(rotation.x,rotation.y,rotation.z,cloud.getPosition())
     }
-    fun cloudMovement(){
-        cloudMoveRotate(cloudRend,Vector3f(0.0f,Math.toRadians(1.0f),0.0f))
-    }
+
     fun cloudRandomMovement(cloud:Renderable){
         var randomMove = (0..2).random()
         if(randomMove==0){
@@ -279,7 +267,6 @@ class Scene(private val window: GameWindow) {
 
     fun update(dt: Float, t: Float) {
         //Wolkenbewegung
-        //cloudMovement()
         cloudRandomMovement(cloudRend)
         //Bewegung der Drohne
         //Drohne sinkt ab
