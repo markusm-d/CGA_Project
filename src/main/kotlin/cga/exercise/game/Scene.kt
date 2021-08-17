@@ -32,20 +32,18 @@ class Scene(private val window: GameWindow) {
      //Object laden
     private val resGround : OBJLoader.OBJResult = OBJLoader.loadOBJ("assets/models/ground.obj")
     private val resCloud:OBJLoader.OBJResult=OBJLoader.loadOBJ("assets/cloud/cloud.obj")
-    private val resRing:OBJLoader.OBJResult=OBJLoader.loadOBJ("assets/ring/checkpoint ring2.obj")
+    private var droneRend = ModelLoader.loadModel("assets/drone/drone.obj",Math.toRadians(0.0f),Math.toRadians(90.0f), 0.0f) ?: throw IllegalArgumentException("Could not load the model")
+    private var ringRend=ModelLoader.loadModel("assets/ring/checkpoint ring2.obj",Math.toRadians(0.0f),Math.toRadians(90.0f), 0.0f) ?: throw IllegalArgumentException("Could not load the model")
 
      //Mesh für die Daten von Vertex und Index laden
     private val objMeshGround : OBJLoader.OBJMesh = resGround.objects[0].meshes[0]
     private val objMeshCloud:OBJLoader.OBJMesh=resCloud.objects[0].meshes[0]
-    private val objMeshRing:OBJLoader.OBJMesh=resRing.objects[0].meshes[0]
 
     //Meshes
     private var groundMesh : Mesh
     private val cloudMesh:Mesh
 
-    private var cycleRend = ModelLoader.loadModel("assets/Light Cycle/Light Cycle/HQ_Movie cycle.obj", Math.toRadians(-90.0f),Math.toRadians(90.0f), 0.0f) ?: throw IllegalArgumentException("Could not load the model")
-    private var droneRend = ModelLoader.loadModel("assets/drone/drone.obj",Math.toRadians(0.0f),Math.toRadians(90.0f), 0.0f) ?: throw IllegalArgumentException("Could not load the model")
-    private var ringRend=ModelLoader.loadModel("assets/ring/checkpoint ring2.obj",Math.toRadians(0.0f),Math.toRadians(90.0f), 0.0f) ?: throw IllegalArgumentException("Could not load the model")
+
 
 
     //Renderables
@@ -128,18 +126,15 @@ class Scene(private val window: GameWindow) {
         cloudRend3.meshList.add(cloudMesh)
         cloudRend4.meshList.add(cloudMesh)
 
-
-        //Bike skalieren
-        cycleRend.scaleLocal(Vector3f(0.8f))
-
         //Drohne Skalieren/Transformieren
         droneRend.scaleLocal(Vector3f(0.00025f))
         droneRend.translateLocal(Vector3f(0.0f,10000.0f,-1.0f))
 
+        //Ring Skalieren/Tranformieren
         ringRend.scaleLocal(Vector3f(0.00025f))
         ringRend.translateLocal(randomPositionCloud())
 
-
+        //Wolken Skalieren/Transformieren
         cloudRend.scaleLocal(Vector3f(0.0025f))
         cloudRend.translateLocal(randomPositionCloud())
         cloudRend1.scaleLocal(Vector3f(0.0025f))
@@ -184,13 +179,14 @@ class Scene(private val window: GameWindow) {
 
     }
 
-
+    //Wolken Position --> Da sie eine andere Größe haben, brauchen sie eine eigene Funktion
     fun randomPositionCloud(): Vector3f {
         var randomPositionX = (-2000..2000).random()
         var randomPositionY = (0..2000).random()
         var randomPositionZ = (-2000..2000).random()
         return Vector3f(randomPositionX.toFloat(),randomPositionY.toFloat(),randomPositionZ.toFloat())
     }
+
     fun randomPosition(): Vector3f {
         var randomPositionX = (-10000..10000).random()
         var randomPositionY = (0..10000).random()
@@ -198,6 +194,7 @@ class Scene(private val window: GameWindow) {
         return Vector3f(randomPositionX.toFloat(),randomPositionY.toFloat(),randomPositionZ.toFloat())
     }
 
+    //AllgemeinesPrüfen auf Kollision
     fun collisionCheck(drone:Renderable, object2:Renderable): Float{
         val xDistance=drone.getPosition().x-object2.getPosition().x
         val yDistance=drone.getPosition().y-object2.getPosition().y
@@ -207,7 +204,7 @@ class Scene(private val window: GameWindow) {
                 (yDistance*yDistance).toDouble()+(zDistance*zDistance).toDouble()).toFloat()
     }
 
-    //Kollision mit Wolke
+    //Kollisionsverhalten mit Wolke
     fun collisionDetectionCloud(drone:Renderable,cloud:Renderable){
         //Distanzen prüfen
         if (collisionCheck(drone,cloud)<=0.2){
@@ -216,7 +213,7 @@ class Scene(private val window: GameWindow) {
         }
     }
 
-    //Kollision für Ringe
+    //Kollisionverhalten für Ringe
     fun collisionDetectionRing(drone:Renderable,ring:Renderable){
         //Distanze prüfen
         if (collisionCheck(drone,ring)<=0.2){
@@ -234,6 +231,7 @@ class Scene(private val window: GameWindow) {
         collisionDetectionCloud(droneRend,cloudRend4)
     }
 
+    //unterschiedliche Wolkenbewegungen
     fun cloudMoveLeft(cloud: Renderable){
         cloud.translateLocal(Vector3f(cloud.getPosition().x-1.0f,cloud.getPosition().y,cloud.getPosition().z))
     }
@@ -244,6 +242,7 @@ class Scene(private val window: GameWindow) {
         cloud.rotateAroundPoint(rotation.x,rotation.y,rotation.z,cloud.getPosition())
     }
 
+    //zufällige Wahl der Wolkenbewegung
     fun cloudRandomMovement(cloud:Renderable){
         var randomMove = (0..2).random()
         if(randomMove==0){
@@ -259,6 +258,7 @@ class Scene(private val window: GameWindow) {
         //Wolkenbewegung
         cloudRandomMovement(cloudRend1)
         cloudRandomMovement(cloudRend3)
+
         //Bewegung der Drohne
         //Drohne sinkt ab
         if (window.getKeyState(GLFW_KEY_LEFT_SHIFT)){
