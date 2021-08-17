@@ -10,9 +10,8 @@ Fügen Sie ihren Projektnamen hinzu
 
 # Teammitglieder
 Listen Sie hier noch einmal alle Teammitglieder auf.
-- Armin Anfang
-- Berta Beliebig
-- Carola Coautor
+- Markus Mohr-Dama
+- Esther Engelbertz
 
 # Featureliste
 Listen Sie hier alle relevanten Features als Liste mit sinnvoller Reihenfolge auf mit Angabe wer das Feature implementiert hat.
@@ -20,7 +19,9 @@ Bei starker Ungleicheit der Features behalten wir uns eine individuelle Notenver
 
 Bspw.
 
-- Verschiedene Kameramodelle (Wechsel zwischen orthographischer und perspektivischer Kamera mittels "c") (Berta)
-- Dynamische Kamera (Steuerung mittels Maus und "WASD" auf der Tastatur) (Carola und Armin)
-- Verschiedene Shaderprogramme (Wechsel mittels "s") (Carola)
-- ...
+- Ring-Objekt erstellen (Markus)
+- mit Kamera umsehen (Steuerung mittels Maus) (Esther)
+- Kollisionserkennung für Wolken und Ringe (unterschiedliches Verhalten der Drohne) (Esther)
+- Umgebung durch eine Art Skybox (Markus)
+- Dynamische Bewegung einiger Wolken (Esther)
+- Bewegungserweiterung für Drohne (Aufsteigen und Absteigen mittels "Space" und "Shift") (Esther und Markus)
