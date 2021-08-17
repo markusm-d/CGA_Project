@@ -3,8 +3,6 @@ package cga.exercise.game
 
 import cga.exercise.components.camera.TronCamera
 import cga.exercise.components.geometry.*
-import cga.exercise.components.light.PointLight
-import cga.exercise.components.light.Spotlight
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.texture.Texture2D
 import cga.framework.GLError
@@ -48,28 +46,24 @@ class Scene(private val window: GameWindow) {
     private var cycleRend = ModelLoader.loadModel("assets/Light Cycle/Light Cycle/HQ_Movie cycle.obj", Math.toRadians(-90.0f),Math.toRadians(90.0f), 0.0f) ?: throw IllegalArgumentException("Could not load the model")
     private var droneRend = ModelLoader.loadModel("assets/drone/drone.obj",Math.toRadians(0.0f),Math.toRadians(90.0f), 0.0f) ?: throw IllegalArgumentException("Could not load the model")
     private var ringRend=ModelLoader.loadModel("assets/ring/checkpoint ring2.obj",Math.toRadians(0.0f),Math.toRadians(90.0f), 0.0f) ?: throw IllegalArgumentException("Could not load the model")
-    private var ring1Rend=ModelLoader.loadModel("assets/ring/checkpoint ring2.obj",Math.toRadians(-90.0f),Math.toRadians(90.0f), 0.0f) ?: throw IllegalArgumentException("Could not load the model")
-    private var ring2Rend=ModelLoader.loadModel("assets/ring/checkpoint ring2.obj",Math.toRadians(0.0f),Math.toRadians(0.0f), 0.0f) ?: throw IllegalArgumentException("Could not load the model")
+
 
     //Renderables
     private var groundRend = Renderable()
-    private val cloudRend= Renderable()
+    private val cloudRend = Renderable()
+    private val cloudRend1 = Renderable()
+    private val cloudRend2 = Renderable()
+    private val cloudRend3 = Renderable()
+    private val cloudRend4 = Renderable()
+
 
     //Camera
     private var tronCamera  = TronCamera()
 
-    //Lights anlegen
-    private var pointLight = PointLight(Vector3f(), Vector3f())
-    private var frontSpotLight = Spotlight(Vector3f(), Vector3f())
-
+    //Mausposition für Bewegung
     private var oldMousePosX : Double = -1.0
     private var oldMousePosY : Double = -1.0
     private var pruefBoolean : Boolean = false
-
-    //Variablen für Cloud-Bewegungsversuch
-    private var stop=1.0f
-    private var moveDiraction=1.0f
-
 
     //scene setup
     init {
@@ -129,6 +123,10 @@ class Scene(private val window: GameWindow) {
         //Meshes zu Randerable hinzufügen
         groundRend.meshList.add(groundMesh)
         cloudRend.meshList.add(cloudMesh)
+        cloudRend1.meshList.add(cloudMesh)
+        cloudRend2.meshList.add(cloudMesh)
+        cloudRend3.meshList.add(cloudMesh)
+        cloudRend4.meshList.add(cloudMesh)
 
 
         //Bike skalieren
@@ -139,31 +137,26 @@ class Scene(private val window: GameWindow) {
         droneRend.translateLocal(Vector3f(0.0f,10000.0f,-1.0f))
 
         ringRend.scaleLocal(Vector3f(0.00025f))
-        ringRend.translateLocal(randomPosition())
+        ringRend.translateLocal(randomPositionCloud())
 
 
         cloudRend.scaleLocal(Vector3f(0.0025f))
-        cloudRend.translateLocal(Vector3f(500.0f,50.0f,-1.0f))
+        cloudRend.translateLocal(randomPositionCloud())
+        cloudRend1.scaleLocal(Vector3f(0.0025f))
+        cloudRend1.translateLocal(Vector3f(-100.0f, 50.0f,-100.0f))
+        cloudRend2.scaleLocal(Vector3f(0.0025f))
+        cloudRend2.translateLocal(randomPositionCloud())
+        cloudRend3.scaleLocal(Vector3f(0.0025f))
+        cloudRend3.translateLocal(Vector3f(500.0f,50.0f,-1.0f))
+        cloudRend4.scaleLocal(Vector3f(0.0025f))
+        cloudRend4.translateLocal(randomPositionCloud())
 
         tronCamera.parent = droneRend
 
         //Kameratransformationen
         tronCamera.rotateLocal(Math.toRadians(-35.0f), 0.0f, 0.0f)
-        //Werte für Bike
-        //tronCamera.translateLocal(Vector3f(0.0f,1.0f,4.0f))
         //Bei drone Werte wegen der Skalierung so hoch
         tronCamera.translateLocal(Vector3f(0.0f, 1.0f, 4000.0f))
-
-        //Lichtertransformationen
-        pointLight = PointLight(tronCamera.getWorldPosition(), Vector3f(1f,1f,0f))
-        pointLight.parent = cycleRend
-
-
-        // Spotlight als Frontlicht setzen
-        frontSpotLight = Spotlight(Vector3f(0.0f, 0.0f, -2.0f), Vector3f(1.0f))
-        frontSpotLight.rotateLocal(Math.toRadians(-10.0f), Math.PI.toFloat(), 0.0f)
-        frontSpotLight.parent = cycleRend
-
 
     }
 
@@ -180,30 +173,27 @@ class Scene(private val window: GameWindow) {
         ringShader.setUniform("colorChange", Vector3f(0.0f,1.0f,0.0f))
         ringRend.render(ringShader)
 
-/*        //shader Benutzung definieren
-        staticShader.use()
-        //Kamera binden
-        tronCamera.bind(staticShader)
-        //mesh rendern
-        staticShader.setUniform("colorChange", Vector3f(1.0f))
-        staticShader.setUniform("colorChange", Vector3f(abs(sin(t)),abs(sin(t/2)),abs(sin(t/3))))
-        cycleRend.render(staticShader)
-        pointLight.bind(staticShader, "byklePoint")
-        frontSpotLight.bind(staticShader, "bykleSpot", tronCamera.getCalculateViewMatrix())
-        staticShader.setUniform("colorChange", Vector3f(0.0f,1.0f,0.0f))
-        groundRend.render(staticShader)*/
-
         cloudShader.use()
         tronCamera.bind(cloudShader)
         cloudShader.setUniform("colorChange", Vector3f(1.0f))
         cloudRend.render(cloudShader)
+        cloudRend2.render(cloudShader)
+        cloudRend4.render(cloudShader)
+        cloudRend1.render(cloudShader)
+        cloudRend3.render(cloudShader)
 
     }
 
 
+    fun randomPositionCloud(): Vector3f {
+        var randomPositionX = (-2000..2000).random()
+        var randomPositionY = (0..2000).random()
+        var randomPositionZ = (-2000..2000).random()
+        return Vector3f(randomPositionX.toFloat(),randomPositionY.toFloat(),randomPositionZ.toFloat())
+    }
     fun randomPosition(): Vector3f {
         var randomPositionX = (-10000..10000).random()
-        var randomPositionY = (-10000..10000).random()
+        var randomPositionY = (0..10000).random()
         var randomPositionZ = (-10000..10000).random()
         return Vector3f(randomPositionX.toFloat(),randomPositionY.toFloat(),randomPositionZ.toFloat())
     }
@@ -220,7 +210,7 @@ class Scene(private val window: GameWindow) {
     //Kollision mit Wolke
     fun collisionDetectionCloud(drone:Renderable,cloud:Renderable){
         //Distanzen prüfen
-        if (collisionCheck(drone,cloud)<=0.1){
+        if (collisionCheck(drone,cloud)<=0.2){
             //wenn getroffen, Drohne neue Position
             drone.translateLocal(randomPosition())
         }
@@ -229,18 +219,19 @@ class Scene(private val window: GameWindow) {
     //Kollision für Ringe
     fun collisionDetectionRing(drone:Renderable,ring:Renderable){
         //Distanze prüfen
-        //müssen jetzt noch sehr mittig durchflogen werden zur Erkennung.
-        // Aber es funktioniert ;)
         if (collisionCheck(drone,ring)<=0.2){
-            //zwar nicht gelöscht, aber so klein, das nicht mehr zu sehen :)
-                //oder man macht ein unendliches Spiel und setzt einfach eine neue Ring-Position?
             ring.translateLocal(randomPosition())
         }
     }
 
     //Abfrage der einzelnen möglichen Kollisionen
     fun collisionDetection(){
+        collisionDetectionRing(droneRend,ringRend)
         collisionDetectionCloud(droneRend,cloudRend)
+        collisionDetectionCloud(droneRend,cloudRend1)
+        collisionDetectionCloud(droneRend,cloudRend2)
+        collisionDetectionCloud(droneRend,cloudRend3)
+        collisionDetectionCloud(droneRend,cloudRend4)
     }
 
     fun cloudMoveLeft(cloud: Renderable){
@@ -250,7 +241,6 @@ class Scene(private val window: GameWindow) {
         cloud.translateLocal(Vector3f(cloud.getPosition().x+1.0f,cloud.getPosition().y,cloud.getPosition().z))
     }
     fun cloudMoveRotate(cloud: Renderable, rotation:Vector3f){
-        //So dreht sich die Wolke zumindest schonmal auf der Stelle ;)
         cloud.rotateAroundPoint(rotation.x,rotation.y,rotation.z,cloud.getPosition())
     }
 
@@ -267,7 +257,8 @@ class Scene(private val window: GameWindow) {
 
     fun update(dt: Float, t: Float) {
         //Wolkenbewegung
-        cloudRandomMovement(cloudRend)
+        cloudRandomMovement(cloudRend1)
+        cloudRandomMovement(cloudRend3)
         //Bewegung der Drohne
         //Drohne sinkt ab
         if (window.getKeyState(GLFW_KEY_LEFT_SHIFT)){
