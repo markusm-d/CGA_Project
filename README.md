@@ -14,14 +14,13 @@ Listen Sie hier noch einmal alle Teammitglieder auf.
 - Esther Engelbertz
 
 # Featureliste
-Listen Sie hier alle relevanten Features als Liste mit sinnvoller Reihenfolge auf mit Angabe wer das Feature implementiert hat.
-Bei starker Ungleicheit der Features behalten wir uns eine individuelle Notenvergabe vor.
-
-Bspw.
-
 - Ring-Objekt erstellen (Markus)
 - mit Kamera umsehen (Steuerung mittels Maus) (Esther)
 - Kollisionserkennung für Wolken und Ringe (unterschiedliches Verhalten der Drohne) (Esther)
 - Umgebung durch eine Art Skybox (Markus)
 - Dynamische Bewegung einiger Wolken (Esther)
 - Bewegungserweiterung für Drohne (Aufsteigen und Absteigen mittels "Space" und "Shift") (Esther und Markus)
+
+# Quellen
+- Drohne: https://sketchfab.com/3d-models/drone-764eea3376134998bd49bb8e5f7d795e
+- Wolke: https://sketchfab.com/3d-models/clouds-116f49c23c4347eba340d0f59b0601f7
