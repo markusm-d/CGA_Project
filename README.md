@@ -6,7 +6,7 @@ Bitte forken Sie dieses Projekt und entwickeln Sie Ihr Abschlussprojekt in diese
 Löschen Sie als erstes den Abschnitt CGAProjekt in dieser Datei und füllen Sie den Rest entsprechend aus für die Abgabe.
 
 # Projektname
-Fügen Sie ihren Projektnamen hinzu
+Drohnenrennen
 
 # Teammitglieder
 Listen Sie hier noch einmal alle Teammitglieder auf.
