@@ -13,7 +13,6 @@ import cga.framework.GameWindow
 import cga.framework.ModelLoader
 import cga.framework.OBJLoader
 import org.joml.Vector3f
-import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL15.*
 import kotlin.math.abs
 import org.joml.Math
@@ -27,6 +26,7 @@ import kotlin.math.sin
  */
 class Scene(private val window: GameWindow) {
     private val staticShader: ShaderProgram
+    private var skyboxShader: ShaderProgram
 
     //ObjectLoader
      //Object laden
@@ -34,11 +34,23 @@ class Scene(private val window: GameWindow) {
      //Mesh für die Daten von Vertex und Index laden
     private val objMeshGround : OBJLoader.OBJMesh = resGround.objects[0].meshes[0]
     //Meshes
-    private var groundMesh : Mesh
+    private var planeBottomMesh : Mesh
+    private var planeBackMesh : Mesh
+    private var planeFrontMesh : Mesh
+    private var planeLeftMesh : Mesh
+    private var planeRightMesh : Mesh
+    private var planeTopMesh : Mesh
+
     private var cycleRend = ModelLoader.loadModel("assets/Light Cycle/Light Cycle/HQ_Movie cycle.obj", Math.toRadians(-90.0f),Math.toRadians(90.0f), 0.0f) ?: throw IllegalArgumentException("Could not load the model")
 
     //Renderables
-    private var groundRend = Renderable()
+    private var planeBottomRend = Renderable()
+    private var planeBackRend = Renderable()
+    private var planeFrontRend = Renderable()
+    private var planeLeftRend = Renderable()
+    private var planeRightRend = Renderable()
+    private var planeTopRend = Renderable()
+
 
     //Camera
     private var tronCamera  = TronCamera()
@@ -51,6 +63,7 @@ class Scene(private val window: GameWindow) {
     init {
         //staticShader = ShaderProgram("assets/shaders/simple_vert.glsl", "assets/shaders/simple_frag.glsl")
         staticShader = ShaderProgram("assets/shaders/tron_vert.glsl", "assets/shaders/tron_frag.glsl")
+        skyboxShader = ShaderProgram("assets/shaders/skybox_vert.glsl", "assets/shaders/skybox_frag.glsl")
 
         //initial opengl state
         //glClearColor(0.6f, 1.0f, 1.0f, 1.0f); GLError.checkThrow()
@@ -74,22 +87,47 @@ class Scene(private val window: GameWindow) {
 
         //Material
          //laden
-        val emitTex : Texture2D = Texture2D("assets/textures/ground_emit.png", true)
+        /*val emitTex : Texture2D = Texture2D("assets/textures/skybox/bottom.jpg", true)
         val diffTex : Texture2D = Texture2D("assets/textures/ground_diff.png", true)
-        val specTex : Texture2D = Texture2D("assets/textures/ground_spec.png", true)
-         //erzeuegn
-        val groundMaterial = Material(diffTex, emitTex, specTex, 60.0f, Vector2f(64.0f,64.0f))
+        val specTex : Texture2D = Texture2D("assets/textures/ground_spec.png", true)*/
+
+        val planeBottomTex = Texture2D("assets/textures/skybox/bottom.jpg", true)
+        val planeBackTex = Texture2D("assets/textures/skybox/back.jpg", true)
+        val planeFrontTex = Texture2D("assets/textures/skybox/front.jpg", true)
+        val planeLeftTex = Texture2D("assets/textures/skybox/left.jpg", true)
+        val planeRightTex = Texture2D("assets/textures/skybox/right.jpg", true)
+        val planeTopTex = Texture2D("assets/textures/skybox/top.jpg", true)
+
 
         //Texturparameter für Objektende
-        emitTex.setTexParams(GL_REPEAT, GL_REPEAT, GL11.GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR)     //Linear = zwischen farbwerten interpolieren
-        diffTex.setTexParams(GL_REPEAT, GL_REPEAT, GL11.GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR)
-        specTex.setTexParams(GL_REPEAT, GL_REPEAT, GL11.GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR)
+        /* emitTex.setTexParams(GL_REPEAT, GL_REPEAT, GL11.GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR)     //Linear = zwischen farbwerten interpolieren
+        diffTex.setTexParams(GL_REPEAT, GL_REPEAT, GL11.GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR)*/
+        //planeBottomTex.setTexParams(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP, GL_LINEAR)
+        //erzeuegn
+        val planeBottomMaterial = Material(planeBottomTex,planeBottomTex,planeBottomTex,60.0f, Vector2f(64.0f,64.0f))
+        val planeBackMaterial = Material(planeBackTex,planeBackTex,planeBackTex,60.0f, Vector2f(64.0f,64.0f))
+        val planeFrontMaterial = Material(planeFrontTex,planeFrontTex,planeFrontTex,60.0f, Vector2f(64.0f,64.0f))
+        val planeLeftMaterial = Material(planeLeftTex,planeLeftTex,planeLeftTex,60.0f, Vector2f(64.0f,64.0f))
+        val planeRightMaterial = Material(planeRightTex,planeRightTex,planeRightTex,60.0f, Vector2f(64.0f,64.0f))
+        val planeTopMaterial = Material(planeTopTex,planeTopTex,planeTopTex,60.0f, Vector2f(64.0f,64.0f))
+
+
 
         //Mesh erzeugen
-        groundMesh = Mesh(objMeshGround.vertexData, objMeshGround.indexData, vertexAttributes, groundMaterial)
+        planeBottomMesh = Mesh(objMeshGround.vertexData, objMeshGround.indexData, vertexAttributes, planeBottomMaterial)
+        planeBackMesh = Mesh(objMeshGround.vertexData, objMeshGround.indexData, vertexAttributes, planeBackMaterial)
+        planeFrontMesh = Mesh(objMeshGround.vertexData, objMeshGround.indexData, vertexAttributes,planeFrontMaterial)
+        planeLeftMesh = Mesh(objMeshGround.vertexData, objMeshGround.indexData, vertexAttributes, planeLeftMaterial)
+        planeRightMesh = Mesh(objMeshGround.vertexData, objMeshGround.indexData, vertexAttributes, planeRightMaterial)
+        planeTopMesh = Mesh(objMeshGround.vertexData, objMeshGround.indexData, vertexAttributes, planeTopMaterial)
 
         //Meshes zu Randerable hinzufügen
-        groundRend.meshList.add(groundMesh)
+        planeBottomRend.meshList.add(planeBottomMesh)
+        planeBackRend.meshList.add(planeBackMesh)
+        planeFrontRend.meshList.add(planeFrontMesh)
+        planeLeftRend.meshList.add(planeLeftMesh)
+        planeRightRend.meshList.add(planeRightMesh)
+        planeTopRend.meshList.add(planeTopMesh)
 
         //Bike skalieren
         cycleRend.scaleLocal(Vector3f(0.8f))
@@ -108,6 +146,23 @@ class Scene(private val window: GameWindow) {
         frontSpotLight = Spotlight(Vector3f(0.0f, 0.0f, -2.0f), Vector3f(1.0f))
         frontSpotLight.rotateLocal(Math.toRadians(-10.0f), Math.PI.toFloat(), 0.0f)
         frontSpotLight.parent = cycleRend
+
+        //Planes rotieren/transformieren
+        planeTopRend.rotateLocal(Math.toRadians(180.0f), 0f,0f) //ausrichtung
+        planeTopRend.translateLocal(Vector3f(0f,-22.83f,0f)) //höhe
+
+        planeLeftRend.rotateLocal(Math.toRadians(90.0f), Math.PI.toFloat(),0f)
+        planeLeftRend.translateLocal(Vector3f(0f,-22.38f,22.38f))
+
+        planeRightRend.rotateLocal(Math.toRadians(-90.0f), 0f,0f)
+        planeRightRend.translateLocal(Vector3f(0f,-22.38f,22.38f))
+
+
+        planeFrontRend.rotateLocal(Math.toRadians(90.0f), 0f,Math.toRadians(90.0f))
+        planeFrontRend.translateLocal(Vector3f(0f,-22.38f,0f))
+
+        planeBackRend.rotateLocal(Math.toRadians(90.0f), 0f,Math.toRadians(-90.0f))
+        planeBackRend.translateLocal(Vector3f(0f,-22.38f,0f))
     }
 
 
@@ -122,8 +177,18 @@ class Scene(private val window: GameWindow) {
         cycleRend.render(staticShader)
         pointLight.bind(staticShader, "byklePoint")
         frontSpotLight.bind(staticShader, "bykleSpot", tronCamera.getCalculateViewMatrix())
-        staticShader.setUniform("colorChange", Vector3f(0.0f,1.0f,0.0f))
-        groundRend.render(staticShader)
+        //staticShader.setUniform("colorChange", Vector3f(0.0f,1.0f,0.0f))
+        planeBottomRend.render(staticShader)
+        planeTopRend.render(staticShader)
+        planeLeftRend.render(staticShader)
+        planeRightRend.render(staticShader)
+        planeFrontRend.render(staticShader)
+        planeBackRend.render(staticShader)
+
+
+        skyboxShader.use()
+        tronCamera.bind(skyboxShader)
+        skyboxShader.setUniform("skybox", 0 )
     }
 
 
