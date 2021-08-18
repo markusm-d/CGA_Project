@@ -258,7 +258,7 @@ class Scene(private val window: GameWindow) {
         //Wolkenbewegung
         cloudRandomMovement(cloudRend1)
         cloudRandomMovement(cloudRend3)
-
+        cloudMoveRotate(cloudRend2,Vector3f(0.0f,Math.toRadians(1.0f),0.0f))
         //Bewegung der Drohne
         //Drohne sinkt ab
         if (window.getKeyState(GLFW_KEY_LEFT_SHIFT)){

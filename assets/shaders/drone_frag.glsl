@@ -36,7 +36,6 @@ void main(){
     vec3 occlusionCol = texture(occlusion, vertexData.texture).rgb;
     vec3 rougnessCol = texture(roughness, vertexData.texture).rgb;
 
-    //Versuch drone sichtbar zu machen
     vec3 colorResult=metallicCol*colorChange;
 
 

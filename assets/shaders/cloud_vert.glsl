@@ -2,7 +2,6 @@
 
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normale;
-//layout(location = 2) in vec3 normale;
 
 uniform mat4 model_matrix;
 uniform mat4 view_matrix;
@@ -13,7 +12,6 @@ out struct VertexData
     vec3 position;
     vec3 normale;
 } vertexData;
-//out vec3 col;
 
 void main(){
 
@@ -24,8 +22,5 @@ void main(){
     gl_Position=proj_matrix*pos;
     vertexData.position=-pos.xyz;
     vertexData.normale=nor.xyz;
-
-    //gl_Position = vec4(position.x, position.y, -position.z, 1.0f);
-    //col =  normals;
 
 }

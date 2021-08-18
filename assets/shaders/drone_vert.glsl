@@ -12,7 +12,6 @@ uniform mat4 proj_matrix;
 //für Textur
 uniform vec2 tcMultiplier;
 
-//uniform vec3 droneSpotLightPosition;
 
 out struct VertexData
 {

@@ -33,7 +33,6 @@ void main(){
     vec3 metalnessCol = texture(metalness, vertexData.texture).rgb;
     vec3 rougnessCol = texture(roughness, vertexData.texture).rgb;
 
-    //Versuch drone sichtbar zu machen
     vec3 colorResult=metalnessCol*colorChange;
 
 

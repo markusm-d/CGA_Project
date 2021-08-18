@@ -1,6 +1,5 @@
 #version 330 core
 
-//in vec3 col;
 in struct VertexData
 {
     vec3 position;
@@ -15,7 +14,6 @@ out vec4 color;
 void main(){
     vec3 position = normalize(vertexData.position);
     vec3 normale = normalize(vertexData.normale);
-
 
     vec3 colorResult=colorChange;
 
