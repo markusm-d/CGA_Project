@@ -34,6 +34,10 @@ class Scene(private val window: GameWindow) {
     private val resCloud:OBJLoader.OBJResult=OBJLoader.loadOBJ("assets/cloud/cloud.obj")
     private var droneRend = ModelLoader.loadModel("assets/drone/drone.obj",Math.toRadians(0.0f),Math.toRadians(90.0f), 0.0f) ?: throw IllegalArgumentException("Could not load the model")
     private var ringRend=ModelLoader.loadModel("assets/ring/checkpoint ring2.obj",Math.toRadians(0.0f),Math.toRadians(90.0f), 0.0f) ?: throw IllegalArgumentException("Could not load the model")
+    private var ringRend1=ModelLoader.loadModel("assets/ring/checkpoint ring2.obj",Math.toRadians(0.0f),Math.toRadians(90.0f), 0.0f) ?: throw IllegalArgumentException("Could not load the model")
+    private var ringRend2=ModelLoader.loadModel("assets/ring/checkpoint ring2.obj",Math.toRadians(0.0f),Math.toRadians(90.0f), 0.0f) ?: throw IllegalArgumentException("Could not load the model")
+    private var ringRend3=ModelLoader.loadModel("assets/ring/checkpoint ring2.obj",Math.toRadians(0.0f),Math.toRadians(90.0f), 0.0f) ?: throw IllegalArgumentException("Could not load the model")
+    private var ringRend4=ModelLoader.loadModel("assets/ring/checkpoint ring2.obj",Math.toRadians(0.0f),Math.toRadians(90.0f), 0.0f) ?: throw IllegalArgumentException("Could not load the model")
 
      //Mesh für die Daten von Vertex und Index laden
     private val objMeshGround : OBJLoader.OBJMesh = resGround.objects[0].meshes[0]
@@ -90,6 +94,15 @@ class Scene(private val window: GameWindow) {
     private var oldMousePosX : Double = -1.0
     private var oldMousePosY : Double = -1.0
     private var pruefBoolean : Boolean = false
+
+    //Prüfvariable
+    private var ringBoolean : Boolean = true
+    private var ringBoolean1 : Boolean = true
+    private var ringBoolean2 : Boolean = true
+    private var ringBoolean3 : Boolean = true
+    private var ringBoolean4 : Boolean = true
+
+    private var ringzahl = 2
 
     //scene setup
     init {
@@ -204,6 +217,14 @@ class Scene(private val window: GameWindow) {
         //Ring Skalieren/Tranformieren
         ringRend.scaleLocal(Vector3f(0.00025f))
         ringRend.translateLocal(randomPosition())
+        ringRend1.scaleLocal(Vector3f(0.00025f))
+        ringRend1.translateLocal(randomPosition())
+        ringRend2.scaleLocal(Vector3f(0.00025f))
+        ringRend2.translateLocal(randomPosition())
+        ringRend3.scaleLocal(Vector3f(0.00025f))
+        ringRend3.translateLocal(randomPosition())
+        ringRend4.scaleLocal(Vector3f(0.00025f))
+        ringRend4.translateLocal(randomPosition())
 
         //Wolken Skalieren/Transformieren
         cloudRend.scaleLocal(Vector3f(0.0025f))
@@ -288,8 +309,13 @@ class Scene(private val window: GameWindow) {
 
         ringShader.use()
         tronCamera.bind(ringShader)
-        ringShader.setUniform("colorChange", Vector3f(1.0f,0.0f,0.0f))
-        ringRend.render(ringShader)
+        ringShader.setUniform("colorChange", Vector3f(1.0f,0.0f,0.5f))
+        if (ringBoolean)ringRend.render(ringShader)
+        if (ringBoolean1)ringRend1.render(ringShader)
+        if (ringBoolean2)ringRend2.render(ringShader)
+        if (ringBoolean3)ringRend3.render(ringShader)
+        if (ringBoolean4)ringRend4.render(ringShader)
+
 
         cloudShader.use()
         tronCamera.bind(cloudShader)
@@ -346,7 +372,7 @@ class Scene(private val window: GameWindow) {
     //Kollisionsverhalten mit Wolke
     fun collisionDetectionCloud(drone:Renderable,cloud:Renderable){
         //Distanzen prüfen
-        if (collisionCheck(drone,cloud)<=0.2){
+        if (collisionCheck(drone,cloud)<=0.2f){
             //wenn getroffen, Drohne neue Position
             drone.translateLocal(randomPosition())
         }
@@ -355,14 +381,40 @@ class Scene(private val window: GameWindow) {
     //Kollisionverhalten für Ringe
     fun collisionDetectionRing(drone:Renderable,ring:Renderable){
         //Distanze prüfen
-        if (collisionCheck(drone,ring)<=0.2){
-            ring.translateLocal(randomPosition())
+        if (collisionCheck(drone,ring)<=0.2f){
+            //"Löschen"
+            if (ring==ringRend)ringBoolean=false
+            if (ring==ringRend1)ringBoolean1=false
+            if (ring==ringRend2)ringBoolean2=false
+            if (ring==ringRend3)ringBoolean3=false
+            if (ring==ringRend4)ringBoolean4=false
+
+            //Prüfen ob Pacour beendet und eventuell neu laden
+            if (!ringBoolean && !ringBoolean1 && !ringBoolean2 && !ringBoolean3 && !ringBoolean4){
+                ringBoolean  = true
+                ringBoolean1 = true
+                ringBoolean2 = true
+                ringBoolean3 = true
+                ringBoolean4 = true
+
+                ringRend.translateLocal(randomPosition())
+                ringRend1.translateLocal(randomPosition())
+                ringRend2.translateLocal(randomPosition())
+                ringRend3.translateLocal(randomPosition())
+                ringRend4.translateLocal(randomPosition())
+
+            }
         }
     }
 
     //Abfrage der einzelnen möglichen Kollisionen
     fun collisionDetection(){
         collisionDetectionRing(droneRend,ringRend)
+        collisionDetectionRing(droneRend,ringRend1)
+        collisionDetectionRing(droneRend,ringRend2)
+        collisionDetectionRing(droneRend,ringRend3)
+        collisionDetectionRing(droneRend,ringRend4)
+
         collisionDetectionCloud(droneRend,cloudRend)
         collisionDetectionCloud(droneRend,cloudRend1)
         collisionDetectionCloud(droneRend,cloudRend2)

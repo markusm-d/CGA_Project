@@ -8,9 +8,6 @@ in struct VertexData
     vec3 normale;
     vec3 toPointLight;
     vec3 toFrontSpotLight;
-    //TODO: Warum stürzt Programm ab, wenn ich den Struct erweitere?
-    //vec3 toDroneSpotLight;
-
 } vertexData;
 
 
