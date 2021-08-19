@@ -58,12 +58,6 @@ class Scene(private val window: GameWindow) {
     private val cloudRend2 = Renderable()
     private val cloudRend3 = Renderable()
     private val cloudRend4 = Renderable()
-    private val cloudRend5 = Renderable()
-    private val cloudRend6 = Renderable()
-    private val cloudRend7 = Renderable()
-    private val cloudRend8 = Renderable()
-    private val cloudRend9 = Renderable()
-
 
     //Planes
     private var planeBottomRend = Renderable()
@@ -165,11 +159,6 @@ class Scene(private val window: GameWindow) {
         cloudRend2.meshList.add(cloudMesh)
         cloudRend3.meshList.add(cloudMesh)
         cloudRend4.meshList.add(cloudMesh)
-        cloudRend5.meshList.add(cloudMesh)
-        cloudRend6.meshList.add(cloudMesh)
-        cloudRend7.meshList.add(cloudMesh)
-        cloudRend8.meshList.add(cloudMesh)
-        cloudRend9.meshList.add(cloudMesh)
 
         planeBottomRend.meshList.add(planeBottomMesh)
         planeBackRend.meshList.add(planeBackMesh)
@@ -185,7 +174,7 @@ class Scene(private val window: GameWindow) {
 
         //Ring Skalieren/Tranformieren
         ringRend.scaleLocal(Vector3f(0.00025f))
-        ringRend.translateLocal(randomPosition())
+        ringRend.translateLocal(randomPositionCloud())
 
         //Wolken Skalieren/Transformieren
         cloudRend.scaleLocal(Vector3f(0.0025f))
@@ -198,20 +187,10 @@ class Scene(private val window: GameWindow) {
         cloudRend3.translateLocal(Vector3f(500.0f,50.0f,-1.0f))
         cloudRend4.scaleLocal(Vector3f(0.0025f))
         cloudRend4.translateLocal(randomPositionCloud())
-        cloudRend5.scaleLocal(Vector3f(0.0025f))
-        cloudRend5.translateLocal(randomPositionCloud())
-        cloudRend6.scaleLocal(Vector3f(0.0025f))
-        cloudRend6.translateLocal(randomPositionCloud())
-        cloudRend7.scaleLocal(Vector3f(0.0025f))
-        cloudRend7.translateLocal(randomPositionCloud())
-        cloudRend8.scaleLocal(Vector3f(0.0025f))
-        cloudRend8.translateLocal(randomPositionCloud())
-        cloudRend9.scaleLocal(Vector3f(0.0025f))
-        cloudRend9.translateLocal(randomPositionCloud())
 
         //Planes rotieren/transformieren
         planeTopRend.rotateLocal(Math.toRadians(180.0f), 0f,0f) //ausrichtung
-        planeTopRend.translateLocal(Vector3f(0f,-22.83f,0f)) //höhe
+        planeTopRend.translateLocal(Vector3f(0f,-32.83f,0f)) //höhe
 
         planeLeftRend.rotateLocal(Math.toRadians(90.0f), Math.PI.toFloat(),0f)
         planeLeftRend.translateLocal(Vector3f(0f,-22.38f,22.38f))
@@ -221,10 +200,10 @@ class Scene(private val window: GameWindow) {
 
 
         planeFrontRend.rotateLocal(Math.toRadians(90.0f), 0f,Math.toRadians(90.0f))
-        planeFrontRend.translateLocal(Vector3f(0f,-22.38f,0f))
+        planeFrontRend.translateLocal(Vector3f(0f,-22.38f,-22.38f))
 
         planeBackRend.rotateLocal(Math.toRadians(90.0f), 0f,Math.toRadians(-90.0f))
-        planeBackRend.translateLocal(Vector3f(0f,-22.38f,0f))
+        planeBackRend.translateLocal(Vector3f(0f,-22.38f,-22.38f))
 
         tronCamera.parent = droneRend
 
@@ -242,17 +221,18 @@ class Scene(private val window: GameWindow) {
         droneShader.use()
         tronCamera.bind(droneShader)
         droneShader.setUniform("colorChange", Vector3f(1.0f,1.0f,1.0f))
+        droneRend.render(droneShader)
+
         planeBottomRend.render(droneShader)
         planeTopRend.render(droneShader)
         planeLeftRend.render(droneShader)
         planeRightRend.render(droneShader)
         planeFrontRend.render(droneShader)
         planeBackRend.render(droneShader)
-        droneRend.render(droneShader)
 
         ringShader.use()
         tronCamera.bind(ringShader)
-        ringShader.setUniform("colorChange", Vector3f(1.0f,0.0f,0.0f))
+        ringShader.setUniform("colorChange", Vector3f(0.0f,1.0f,0.0f))
         ringRend.render(ringShader)
 
         cloudShader.use()
@@ -263,28 +243,24 @@ class Scene(private val window: GameWindow) {
         cloudRend4.render(cloudShader)
         cloudRend1.render(cloudShader)
         cloudRend3.render(cloudShader)
-        cloudRend5.render(cloudShader)
-        cloudRend6.render(cloudShader)
-        cloudRend7.render(cloudShader)
-        cloudRend8.render(cloudShader)
-        cloudRend9.render(cloudShader)
 
+        //staticShader.use()
 
 
     }
 
     //Wolken Position --> Da sie eine andere Größe haben, brauchen sie eine eigene Funktion
     fun randomPositionCloud(): Vector3f {
-        var randomPositionX = (-5000..5000).random()
-        var randomPositionY = (200..5000).random()
-        var randomPositionZ = (-5000..5000).random()
+        var randomPositionX = (-2000..2000).random()
+        var randomPositionY = (0..2000).random()
+        var randomPositionZ = (-2000..2000).random()
         return Vector3f(randomPositionX.toFloat(),randomPositionY.toFloat(),randomPositionZ.toFloat())
     }
 
     fun randomPosition(): Vector3f {
-        var randomPositionX = (-15000..15000).random()
-        var randomPositionY = (1500..15000).random()
-        var randomPositionZ = (-15000..15000).random()
+        var randomPositionX = (-10000..10000).random()
+        var randomPositionY = (0..10000).random()
+        var randomPositionZ = (-10000..10000).random()
         return Vector3f(randomPositionX.toFloat(),randomPositionY.toFloat(),randomPositionZ.toFloat())
     }
 
