@@ -368,6 +368,21 @@ class Scene(private val window: GameWindow) {
         collisionDetectionCloud(droneRend,cloudRend2)
         collisionDetectionCloud(droneRend,cloudRend3)
         collisionDetectionCloud(droneRend,cloudRend4)
+        collisionDetectionCloud(droneRend,cloudRend5)
+        collisionDetectionCloud(droneRend,cloudRend6)
+        collisionDetectionCloud(droneRend,cloudRend7)
+        collisionDetectionCloud(droneRend,cloudRend8)
+        collisionDetectionCloud(droneRend,cloudRend9)
+        collisionDetectionCloud(droneRend,cloudRend10)
+        collisionDetectionCloud(droneRend,cloudRend12)
+        collisionDetectionCloud(droneRend,cloudRend13)
+        collisionDetectionCloud(droneRend,cloudRend14)
+        collisionDetectionCloud(droneRend,cloudRend15)
+        collisionDetectionCloud(droneRend,cloudRend16)
+        collisionDetectionCloud(droneRend,cloudRend17)
+        collisionDetectionCloud(droneRend,cloudRend18)
+        collisionDetectionCloud(droneRend,cloudRend19)
+
     }
 
     //unterschiedliche Wolkenbewegungen
