@@ -40,9 +40,14 @@ class Scene(private val window: GameWindow) {
     private val objMeshCloud:OBJLoader.OBJMesh=resCloud.objects[0].meshes[0]
 
     //Meshes
-    private var groundMesh : Mesh
+    //private var groundMesh : Mesh
     private val cloudMesh:Mesh
-
+    private var planeBottomMesh : Mesh
+    private var planeBackMesh : Mesh
+    private var planeFrontMesh : Mesh
+    private var planeLeftMesh : Mesh
+    private var planeRightMesh : Mesh
+    private var planeTopMesh : Mesh
 
 
 
@@ -53,6 +58,14 @@ class Scene(private val window: GameWindow) {
     private val cloudRend2 = Renderable()
     private val cloudRend3 = Renderable()
     private val cloudRend4 = Renderable()
+
+    //Planes
+    private var planeBottomRend = Renderable()
+    private var planeBackRend = Renderable()
+    private var planeFrontRend = Renderable()
+    private var planeLeftRend = Renderable()
+    private var planeRightRend = Renderable()
+    private var planeTopRend = Renderable()
 
 
     //Camera
@@ -104,9 +117,23 @@ class Scene(private val window: GameWindow) {
 
         val cloudTex=Texture2D("assets/cloud/white.tga",true)
 
+        // Plane Material
+        val planeBottomTex = Texture2D("assets/textures/skybox/bottom.jpg", true)
+        val planeBackTex = Texture2D("assets/textures/skybox/back.jpg", true)
+        val planeFrontTex = Texture2D("assets/textures/skybox/front.jpg", true)
+        val planeLeftTex = Texture2D("assets/textures/skybox/left.jpg", true)
+        val planeRightTex = Texture2D("assets/textures/skybox/right.jpg", true)
+        val planeTopTex = Texture2D("assets/textures/skybox/top.jpg", true)
+
         //erzeuegn
-        val groundMaterial = Material(diffTex, emitTex, specTex, 60.0f, Vector2f(64.0f,64.0f))
+        //val groundMaterial = Material(diffTex, emitTex, specTex, 60.0f, Vector2f(64.0f,64.0f))
         val cloudMaterial=Material(cloudTex,cloudTex,cloudTex,60.0f, Vector2f(64.0f,64.0f))
+        val planeBottomMaterial = Material(planeBottomTex,planeBottomTex,planeBottomTex,60.0f, Vector2f(64.0f,64.0f))
+        val planeBackMaterial = Material(planeBackTex,planeBackTex,planeBackTex,60.0f, Vector2f(64.0f,64.0f))
+        val planeFrontMaterial = Material(planeFrontTex,planeFrontTex,planeFrontTex,60.0f, Vector2f(64.0f,64.0f))
+        val planeLeftMaterial = Material(planeLeftTex,planeLeftTex,planeLeftTex,60.0f, Vector2f(64.0f,64.0f))
+        val planeRightMaterial = Material(planeRightTex,planeRightTex,planeRightTex,60.0f, Vector2f(64.0f,64.0f))
+        val planeTopMaterial = Material(planeTopTex,planeTopTex,planeTopTex,60.0f, Vector2f(64.0f,64.0f))
 
         //Texturparameter für Objektende
         emitTex.setTexParams(GL_REPEAT, GL_REPEAT, GL11.GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR)     //Linear = zwischen farbwerten interpolieren
@@ -114,17 +141,32 @@ class Scene(private val window: GameWindow) {
         specTex.setTexParams(GL_REPEAT, GL_REPEAT, GL11.GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR)
 
         //Mesh erzeugen
-        groundMesh = Mesh(objMeshGround.vertexData, objMeshGround.indexData, vertexAttributes, groundMaterial)
+        //groundMesh = Mesh(objMeshGround.vertexData, objMeshGround.indexData, vertexAttributes, groundMaterial)
         cloudMesh=Mesh(objMeshCloud.vertexData,objMeshCloud.indexData,cloudVertexAttributes, cloudMaterial)
+
+        planeBottomMesh = Mesh(objMeshGround.vertexData, objMeshGround.indexData, vertexAttributes, planeBottomMaterial)
+        planeBackMesh = Mesh(objMeshGround.vertexData, objMeshGround.indexData, vertexAttributes, planeBackMaterial)
+        planeFrontMesh = Mesh(objMeshGround.vertexData, objMeshGround.indexData, vertexAttributes,planeFrontMaterial)
+        planeLeftMesh = Mesh(objMeshGround.vertexData, objMeshGround.indexData, vertexAttributes, planeLeftMaterial)
+        planeRightMesh = Mesh(objMeshGround.vertexData, objMeshGround.indexData, vertexAttributes, planeRightMaterial)
+        planeTopMesh = Mesh(objMeshGround.vertexData, objMeshGround.indexData, vertexAttributes, planeTopMaterial)
 
 
         //Meshes zu Randerable hinzufügen
-        groundRend.meshList.add(groundMesh)
+        //groundRend.meshList.add(groundMesh)
         cloudRend.meshList.add(cloudMesh)
         cloudRend1.meshList.add(cloudMesh)
         cloudRend2.meshList.add(cloudMesh)
         cloudRend3.meshList.add(cloudMesh)
         cloudRend4.meshList.add(cloudMesh)
+
+        planeBottomRend.meshList.add(planeBottomMesh)
+        planeBackRend.meshList.add(planeBackMesh)
+        planeFrontRend.meshList.add(planeFrontMesh)
+        planeLeftRend.meshList.add(planeLeftMesh)
+        planeRightRend.meshList.add(planeRightMesh)
+        planeTopRend.meshList.add(planeTopMesh)
+
 
         //Drohne Skalieren/Transformieren
         droneRend.scaleLocal(Vector3f(0.00025f))
@@ -146,6 +188,23 @@ class Scene(private val window: GameWindow) {
         cloudRend4.scaleLocal(Vector3f(0.0025f))
         cloudRend4.translateLocal(randomPositionCloud())
 
+        //Planes rotieren/transformieren
+        planeTopRend.rotateLocal(Math.toRadians(180.0f), 0f,0f) //ausrichtung
+        planeTopRend.translateLocal(Vector3f(0f,-22.83f,0f)) //höhe
+
+        planeLeftRend.rotateLocal(Math.toRadians(90.0f), Math.PI.toFloat(),0f)
+        planeLeftRend.translateLocal(Vector3f(0f,-22.38f,22.38f))
+
+        planeRightRend.rotateLocal(Math.toRadians(-90.0f), 0f,0f)
+        planeRightRend.translateLocal(Vector3f(0f,-22.38f,22.38f))
+
+
+        planeFrontRend.rotateLocal(Math.toRadians(90.0f), 0f,Math.toRadians(90.0f))
+        planeFrontRend.translateLocal(Vector3f(0f,-22.38f,0f))
+
+        planeBackRend.rotateLocal(Math.toRadians(90.0f), 0f,Math.toRadians(-90.0f))
+        planeBackRend.translateLocal(Vector3f(0f,-22.38f,0f))
+
         tronCamera.parent = droneRend
 
         //Kameratransformationen
@@ -158,6 +217,7 @@ class Scene(private val window: GameWindow) {
 
     fun render(dt: Float, t: Float) {
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
+
         droneShader.use()
         tronCamera.bind(droneShader)
         droneShader.setUniform("colorChange", Vector3f(1.0f,1.0f,1.0f))
@@ -176,6 +236,14 @@ class Scene(private val window: GameWindow) {
         cloudRend4.render(cloudShader)
         cloudRend1.render(cloudShader)
         cloudRend3.render(cloudShader)
+
+        staticShader.use()
+        planeBottomRend.render(staticShader)
+        planeTopRend.render(staticShader)
+        planeLeftRend.render(staticShader)
+        planeRightRend.render(staticShader)
+        planeFrontRend.render(staticShader)
+        planeBackRend.render(staticShader)
 
     }
 
